@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{0DA21294-40FE-49A6-AA5C-0EF3D4240A0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancePlanner.App", "Client\FinancePlanner.App\FinancePlanner.App.csproj", "{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{3447A980-CD95-4134-BC93-67DDCC585A81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1} = {0DA21294-40FE-49A6-AA5C-0EF3D4240A0F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FE750FF-F412-4267-A0D6-AE0ED0791DDB}
+	EndGlobalSection
+EndGlobal
