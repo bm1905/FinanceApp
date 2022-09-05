@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxServices.Plugins.W4Before2020", "Services\TaxServices\Plugins\TaxServices.Plugins.W4Before2020\TaxServices.Plugins.W4Before2020.csproj", "{9C248965-C049-4827-864B-02DCCBC064BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancePlanner.TaxServices.Domain", "Services\TaxServices\FinancePlanner.TaxServices.Domain\FinancePlanner.TaxServices.Domain.csproj", "{07B42D68-CF1C-4903-A40B-4982990D1809}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{9C248965-C049-4827-864B-02DCCBC064BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C248965-C049-4827-864B-02DCCBC064BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C248965-C049-4827-864B-02DCCBC064BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B42D68-CF1C-4903-A40B-4982990D1809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B42D68-CF1C-4903-A40B-4982990D1809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B42D68-CF1C-4903-A40B-4982990D1809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B42D68-CF1C-4903-A40B-4982990D1809}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{8A1BD43C-C711-4EC3-9DA9-56A299C40CB5} = {22BF4812-C07C-4E50-8F49-7900056F38BC}
 		{B38C4CD0-C8B7-4196-BE4C-F08420D01E18} = {22BF4812-C07C-4E50-8F49-7900056F38BC}
 		{9C248965-C049-4827-864B-02DCCBC064BD} = {90F352C9-AF78-4904-98DE-174176A823C8}
+		{07B42D68-CF1C-4903-A40B-4982990D1809} = {22BF4812-C07C-4E50-8F49-7900056F38BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FE750FF-F412-4267-A0D6-AE0ED0791DDB}

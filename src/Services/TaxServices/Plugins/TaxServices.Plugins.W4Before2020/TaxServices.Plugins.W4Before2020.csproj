@@ -8,7 +8,15 @@
     <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
   </Target>
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\FinancePlanner.TaxServices.Application\FinancePlanner.TaxServices.Application.csproj">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>false</PrivateAssets>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FinancePlanner.TaxServices.Infrastructure\FinancePlanner.TaxServices.Infrastructure.csproj">
       <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>false</PrivateAssets>
       <Private>false</Private>

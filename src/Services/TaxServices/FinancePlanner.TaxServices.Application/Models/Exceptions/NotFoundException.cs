@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FinancePlanner.TaxServices.Application.Models.Exceptions
 {
     [Serializable]
-    public class NotFoundException : Exception
+    public class NotFoundException : ApplicationException
     {
         public NotFoundException() { }
 

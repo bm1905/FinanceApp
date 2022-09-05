@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FinancePlanner.TaxServices.Application\FinancePlanner.TaxServices.Application.csproj" />
+    <ProjectReference Include="..\FinancePlanner.TaxServices.Infrastructure\FinancePlanner.TaxServices.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

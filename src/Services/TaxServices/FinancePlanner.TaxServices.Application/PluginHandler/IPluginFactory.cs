@@ -2,7 +2,7 @@
 {
     public interface IPluginFactory
     {
-        T GetService<T>(string localeType);
+        T GetService<T>(string w4Type);
         void Initialize();
     }
 }

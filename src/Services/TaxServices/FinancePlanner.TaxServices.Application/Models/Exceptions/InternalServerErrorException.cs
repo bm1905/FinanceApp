@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FinancePlanner.TaxServices.Application.Models.Exceptions
 {
     [Serializable]
-    public class InternalServerErrorException : Exception
+    public class InternalServerErrorException : ApplicationException
     {
         public InternalServerErrorException() { }
 

@@ -1,4 +1,5 @@
 using FinancePlanner.TaxServices.Application.Extensions;
+using FinancePlanner.TaxServices.Infrastructure.Extensions;
 using FinancePlanner.TaxServices.Services.Extensions;
 using FinancePlanner.TaxServices.Services.Middlewares;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +16,7 @@ IConfiguration configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddWebApiServices(configuration).AddApplicationServices();
+builder.Services.AddWebApiServices(configuration).AddApplicationServices().AddInfrastructureServices();
 
 // Build the app
 WebApplication app = builder.Build();

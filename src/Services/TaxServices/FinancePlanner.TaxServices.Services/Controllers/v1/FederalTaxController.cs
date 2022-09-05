@@ -37,5 +37,15 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
             FedTaxWithheldResponse result = await _mediator.Send(query);
             return Ok(result);
         }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost("CalculateTaxDeductions")]
+        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<FedTaxWithheldResponse>> CalculateTaxDeductions([FromBody] CalculateFedWithheldRequest request)
+        {
+            GetFedTaxWithheldQuery query = new GetFedTaxWithheldQuery(request);
+            FedTaxWithheldResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
     }
 }

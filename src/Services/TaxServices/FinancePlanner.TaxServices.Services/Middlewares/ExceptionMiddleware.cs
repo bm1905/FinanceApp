@@ -29,15 +29,14 @@ namespace FinancePlanner.TaxServices.Services.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, ex.ToString());
                 context.Response.ContentType = "application/json";
 
                 context.Response.StatusCode = ex switch
                 {
                     BadRequestException => (int)HttpStatusCode.BadRequest,
-                    AlreadyExistsException => (int)HttpStatusCode.Conflict,
+                    ValidationException => (int)HttpStatusCode.BadRequest,
                     NotFoundException => (int)HttpStatusCode.NotFound,
-                    UnauthorizedException => (int)HttpStatusCode.Unauthorized,
                     InternalServerErrorException => (int)HttpStatusCode.InternalServerError,
                     _ => (int)HttpStatusCode.InternalServerError
                 };

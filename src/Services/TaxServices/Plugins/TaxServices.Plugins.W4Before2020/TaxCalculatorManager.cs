@@ -1,38 +1,46 @@
-﻿using FinancePlanner.TaxServices.Application.Contracts;
-using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFedTaxWithheld;
-using System.Threading.Tasks;
-using FinancePlanner.TaxServices.Application.Models;
+﻿using FinancePlanner.TaxServices.Application.Models;
 using FinancePlanner.TaxServices.Application.Models.Exceptions;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using FinancePlanner.TaxServices.Application.Constants;
+using FinancePlanner.TaxServices.Application.Enums;
+using FinancePlanner.TaxServices.Domain.Entities;
+using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using TaxServices.Plugins.W4Before2020.Models;
 
 namespace TaxServices.Plugins.W4Before2020
 {
-    public class TaxCalculatorManager : IFederalTaxWithheldCalculator
+    public class TaxCalculatorManager
     {
-        private readonly IConfiguration _configuration;
+        private readonly IFederalTaxBracketRepository _federalTaxBracketRepository;
 
-        public TaxCalculatorManager(IConfiguration configuration)
+        public TaxCalculatorManager(IFederalTaxBracketRepository federalTaxBracketRepository)
         {
-            _configuration = configuration;
+            _federalTaxBracketRepository = federalTaxBracketRepository;
         }
 
-        public async Task<FedTaxWithheldResponse> CalculateFederalTaxWithheldAmount(CalculateFedWithheldRequest model)
+        internal W4Before2020Model GetModel(CalculateFedWithheldRequest model)
         {
-            int allowanceNumber= 0;
-            decimal additionalAmountToWithheld = 0;
+            model.Data.TryGetValue("AllowanceNumber", out string allowanceNumberString);
+            if (string.IsNullOrEmpty(allowanceNumberString))
+            {
+                throw new BadRequestException("Could not find AllowanceNumber in request");
+            }
 
-            if (model.Data.TryGetValue("AllowanceNumber", out string allowanceNumberString) &&
-                int.TryParse(allowanceNumberString, out allowanceNumber))
+            if (!int.TryParse(allowanceNumberString, out int allowanceNumber))
             {
                 throw new BadRequestException("Invalid AllowanceNumber passed in request");
-            };
+            }
 
-            if (model.Data.TryGetValue("AdditionalAmountToWithheld", out string additionalAmountToWithheldString) &&
-                decimal.TryParse(allowanceNumberString, out additionalAmountToWithheld))
+            model.Data.TryGetValue("AdditionalAmountToWithheld", out string additionalAmountToWithheldString);
+            if (string.IsNullOrEmpty(additionalAmountToWithheldString))
+            {
+                throw new BadRequestException("Could not find AdditionalAmountToWithheld in request");
+            }
+
+            if (!decimal.TryParse(additionalAmountToWithheldString, out decimal additionalAmountToWithheld))
             {
                 throw new BadRequestException("Invalid AdditionalAmountToWithheld passed in request");
-            };
+            }
 
             W4Before2020Model w4Before2020Model = new W4Before2020Model
             {
@@ -44,21 +52,38 @@ namespace TaxServices.Plugins.W4Before2020
                 AllowanceNumber = allowanceNumber
             };
 
+            return w4Before2020Model;
+        }
+
+        internal decimal GetAdjustedAnnualWage(W4Before2020Model w4Before2020Model)
+        {
             decimal _1c = w4Before2020Model.TaxableWage * w4Before2020Model.PayPeriodNumber;
             decimal _1k = w4Before2020Model.AllowanceNumber * 4300;
             decimal _1l = _1c - _1k;
             if (_1l < 0) _1l = 0;
-            decimal adjustedAnnualWage = _1l;
-
-            // Db
-            // adjustedAnnualWage at least amount of Column A but less than Column B
-
-
-
-            FedTaxWithheldResponse response = new FedTaxWithheldResponse();
-            return response;
+            return _1l;
         }
 
- 
+        internal async Task<decimal> GetFederalTaxWithheldAmount(W4Before2020Model w4Before2020Model, decimal adjustedAnnualWage)
+        {
+            string tableName = w4Before2020Model.TaxFilingStatus switch
+            {
+                TaxFilingStatus.MarriedFilingJointly => TaxMethodTables.MarriedFiledJointlyW4Before2020,
+                TaxFilingStatus.SingleOrMarriedFilingSingle => TaxMethodTables.SingleOrMarriedFiledSeparatelyW4Before2020,
+                TaxFilingStatus.HeadOfHousehold => TaxMethodTables.HeadOfHouseholdW4Before2020,
+                _ => string.Empty,
+            };
+            PercentageMethodTable percentageMethodTable = await _federalTaxBracketRepository.GetFederalTaxPercentage(adjustedAnnualWage, tableName);
+
+            decimal _2b = percentageMethodTable.AtLeast;
+            decimal _2c = percentageMethodTable.TentativeHoldAmount;
+            decimal _2d = percentageMethodTable.Percentage;
+            decimal _2e = adjustedAnnualWage - _2b;
+            decimal _2f = _2e * _2d / 100;
+            decimal _2g = _2c + _2f;
+            decimal _2h = _2g / w4Before2020Model.PayPeriodNumber;
+            decimal _4b = w4Before2020Model.AdditionalAmountToWithheld + _2h;
+            return _4b;
+        }
     }
 }

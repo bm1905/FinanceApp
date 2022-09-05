@@ -8,5 +8,6 @@ namespace FinancePlanner.TaxServices.Application.Models
         public TaxFilingStatus TaxFilingStatus { get; set; }
         public decimal TaxableWage { get; set; }
         public int PayPeriodNumber { get; set; }
+        public string State { get; set; }
     }
 }

@@ -5,18 +5,18 @@ using FinancePlanner.TaxServices.Application.Contracts;
 using FinancePlanner.TaxServices.Application.PluginHandler;
 using MediatR;
 
-namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFedTaxWithheld
+namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetTaxDeductions
 {
-    public class GetFedTaxWithheldQueryHandler : IRequestHandler<GetFedTaxWithheldQuery, FedTaxWithheldResponse>
+    public class GetTaxDeductionsQueryHandler : IRequestHandler<GetTaxDeductionsQuery, TaxDeductionsResponse>
     {
         private readonly PluginFactory _pluginFactory;
 
-        public GetFedTaxWithheldQueryHandler(PluginFactory pluginFactory)
+        public GetTaxDeductionsQueryHandler(PluginFactory pluginFactory)
         {
             _pluginFactory = pluginFactory;
         }
 
-        public async Task<FedTaxWithheldResponse> Handle(GetFedTaxWithheldQuery request, CancellationToken cancellationToken)
+        public async Task<TaxDeductionsResponse> Handle(GetTaxDeductionsQuery request, CancellationToken cancellationToken)
         {
             if (request.RequestModel.W4Type == null)
             {
@@ -29,7 +29,7 @@ namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.Get
                 throw new ApplicationException("Something went wrong while loading plugin!");
             }
 
-            FedTaxWithheldResponse response = await service.CalculateFederalTaxWithheldAmount(request.RequestModel);
+            TaxDeductionsResponse response = await service.CalculateTaxDeductions(request.RequestModel);
             return response;
         }
     }

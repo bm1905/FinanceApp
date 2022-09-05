@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FinancePlanner.TaxServices.Application.Models.Exceptions;
+using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 
 namespace FinancePlanner.TaxServices.Application.PluginHandler
@@ -13,11 +14,13 @@ namespace FinancePlanner.TaxServices.Application.PluginHandler
         private readonly Dictionary<string, Assembly> _pluginMap;
         private readonly Dictionary<string, string> _pluginConfig;
         private readonly IConfiguration _configuration;
+        private readonly IFederalTaxBracketRepository _federalTaxBracketRepository;
 
-        public PluginFactory(IConfiguration configuration)
+        public PluginFactory(IConfiguration configuration, IFederalTaxBracketRepository federalTaxBracketRepository)
         {
             _pluginMap = new Dictionary<string, Assembly>();
             _configuration = configuration;
+            _federalTaxBracketRepository = federalTaxBracketRepository;
             _pluginConfig = _configuration.GetSection("W4PluginConfig")
                 .GetChildren()
                 .ToDictionary(x => x.Key, x => x.Value);
@@ -44,7 +47,7 @@ namespace FinancePlanner.TaxServices.Application.PluginHandler
                     throw new InternalServerErrorException($"No plugin implementing the interface {nameof(T)} and with name " +
                                                 $"{localeType} found in {assembly} at {assembly?.Location}");
 
-                var pluginService = (T)Activator.CreateInstance(pluginType, _configuration);
+                var pluginService = (T)Activator.CreateInstance(pluginType, _configuration, _federalTaxBracketRepository);
                 return pluginService;
             }
             catch (Exception ex)
