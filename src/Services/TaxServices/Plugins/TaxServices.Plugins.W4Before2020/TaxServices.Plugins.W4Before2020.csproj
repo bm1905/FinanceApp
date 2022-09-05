@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
+  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FinancePlanner.TaxServices.Application\FinancePlanner.TaxServices.Application.csproj">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>false</PrivateAssets>
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>
