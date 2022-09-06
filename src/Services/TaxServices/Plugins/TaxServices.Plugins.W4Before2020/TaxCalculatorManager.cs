@@ -85,5 +85,20 @@ namespace TaxServices.Plugins.W4Before2020
             decimal _4b = w4Before2020Model.AdditionalAmountToWithheld + _2h;
             return _4b;
         }
+
+        //internal async Task<decimal> GetStateTaxWithheldAmount()
+        //{
+
+        //}
+
+        //internal async Task<decimal> GetMedicareTaxAmount()
+        //{
+
+        //}
+
+        //internal async Task<decimal> GetSocialSecurityTax()
+        //{
+
+        //}
     }
 }

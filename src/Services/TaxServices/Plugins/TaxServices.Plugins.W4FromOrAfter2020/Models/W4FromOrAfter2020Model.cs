@@ -1,4 +1,6 @@
-﻿namespace FinancePlanner.TaxServices.Domain.Entities
+﻿using FinancePlanner.TaxServices.Application.Enums;
+
+namespace TaxServices.Plugins.W4FromOrAfter2020.Models
 {
     public class W4FromOrAfter2020Model
     {
@@ -12,5 +14,9 @@
         public bool IsMultipleJobsChecked { get; set; }
         // This is step 3 for 2022 W4 Form
         public decimal ClaimDependentsAmount { get; set; }
+        public string W4Type { get; set; }
+        public TaxFilingStatus TaxFilingStatus { get; set; }
+        public decimal TaxableWage { get; set; }
+        public int PayPeriodNumber { get; set; }
     }
 }

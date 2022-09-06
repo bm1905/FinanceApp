@@ -17,7 +17,7 @@ namespace FinancePlanner.TaxServices.Infrastructure.Repositories
 
         public async Task<PercentageMethodTable> GetFederalTaxPercentage(decimal adjustedAnnualWage, string tableName)
         {
-            string query = $"SELECT * FROM {tableName} WHERE {adjustedAnnualWage} >= At_Least AND {adjustedAnnualWage} < But_Less_Than;";
+            string query = $"SELECT At_Least AS AtLeast, But_Less_Than AS ButLessThan, Tentative_Hold_Amount AS TentativeHoldAmount, Percentage AS Percentage, Threshold AS Threshold FROM {tableName} WHERE {adjustedAnnualWage} >= At_Least AND {adjustedAnnualWage} < But_Less_Than;";
             using IDbConnection connection = _context.CreateConnection();
             PercentageMethodTable percentageMethodTable = await connection.QuerySingleAsync<PercentageMethodTable>(query);
             return percentageMethodTable;

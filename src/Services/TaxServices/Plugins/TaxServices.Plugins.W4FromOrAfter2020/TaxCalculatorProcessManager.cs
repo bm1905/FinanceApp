@@ -1,13 +1,13 @@
-﻿using FinancePlanner.TaxServices.Application.Contracts;
+﻿using System.Threading.Tasks;
+using FinancePlanner.TaxServices.Application.Contracts;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFedTaxWithheld;
-using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetTaxDeductions;
 using FinancePlanner.TaxServices.Application.Models;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
-using TaxServices.Plugins.W4Before2020.Models;
+using TaxServices.Plugins.W4FromOrAfter2020.Models;
 
-namespace TaxServices.Plugins.W4Before2020
+namespace TaxServices.Plugins.W4FromOrAfter2020
 {
     public class TaxCalculatorProcessManager : IFederalTaxWithheldCalculator
     {
@@ -22,9 +22,9 @@ namespace TaxServices.Plugins.W4Before2020
 
         public async Task<FedTaxWithheldResponse> CalculateFederalTaxWithheldAmount(CalculateFedWithheldRequest model)
         {
-            W4Before2020Model w4Before2020Model = _taxCalculatorManager.GetModel(model);
-            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4Before2020Model);
-            decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4Before2020Model, adjustedAnnualWage);
+            W4FromOrAfter2020Model w4FromOrAfter2020Model = _taxCalculatorManager.GetModel(model);
+            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4FromOrAfter2020Model);
+            decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4FromOrAfter2020Model, adjustedAnnualWage);
 
             FedTaxWithheldResponse response = new FedTaxWithheldResponse
             {
@@ -37,6 +37,10 @@ namespace TaxServices.Plugins.W4Before2020
 
         public async Task<TaxDeductionsResponse> CalculateTaxDeductions(CalculateTaxDeductionsRequest model)
         {
+            W4FromOrAfter2020Model w4FromOrAfter2020Model = _taxCalculatorManager.GetModel(model);
+            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4FromOrAfter2020Model);
+            decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4FromOrAfter2020Model, adjustedAnnualWage);
+
             throw new System.NotImplementedException();
         }
     }

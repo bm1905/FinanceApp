@@ -10,7 +10,7 @@ namespace FinancePlanner.TaxServices.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddSingleton<IDapperContext, DapperContext>();
-            //services.AddSingleton<IFederalTaxBracketRepository, FederalTaxBracketRepository>();
+            services.AddSingleton<IFederalTaxBracketRepository, FederalTaxBracketRepository>();
             services.AddSingleton<IFederalTaxBracketRepository>(b => new FederalTaxBracketRepository(b.GetRequiredService<IDapperContext>()));
             return services;
         }

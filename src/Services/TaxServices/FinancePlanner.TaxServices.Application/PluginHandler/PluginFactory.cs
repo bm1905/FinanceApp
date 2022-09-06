@@ -36,16 +36,16 @@ namespace FinancePlanner.TaxServices.Application.PluginHandler
             return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
         }
 
-        public T GetService<T>(string localeType)
+        public T GetService<T>(string w4Type)
         {
             try
             {
-                _pluginMap.TryGetValue(localeType, out Assembly assembly);
+                _pluginMap.TryGetValue(w4Type, out Assembly assembly);
                 Type pluginType = assembly?.GetTypes().FirstOrDefault(c => typeof(T).IsAssignableFrom(c));
 
                 if (pluginType == null)
                     throw new InternalServerErrorException($"No plugin implementing the interface {nameof(T)} and with name " +
-                                                $"{localeType} found in {assembly} at {assembly?.Location}");
+                                                $"{w4Type} found in {assembly} at {assembly?.Location}");
 
                 var pluginService = (T)Activator.CreateInstance(pluginType, _configuration, _federalTaxBracketRepository);
                 return pluginService;

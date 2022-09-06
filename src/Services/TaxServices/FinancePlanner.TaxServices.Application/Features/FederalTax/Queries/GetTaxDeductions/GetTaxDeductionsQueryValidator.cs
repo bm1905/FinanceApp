@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
 
-namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFedTaxWithheld
+namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetTaxDeductions
 {
-    public class GetTaxDeductionsQueryValidator : AbstractValidator<GetFedTaxWithheldQuery>
+    public class GetTaxDeductionsQueryValidator : AbstractValidator<GetTaxDeductionsQuery>
     {
         public GetTaxDeductionsQueryValidator(IConfiguration configuration)
         {
