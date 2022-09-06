@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using FinancePlanner.TaxServices.Application.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 
@@ -10,12 +12,13 @@ namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.Get
         public GetTaxDeductionsQueryValidator(IConfiguration configuration)
         {
             IEnumerable<IConfigurationSection> configSection = configuration.GetSection("W4PluginConfig").GetChildren();
-            List<string> listOfConfigs = configSection.Select(sectionKey => sectionKey.Key).ToList();
+            List<string> configs = configSection.Select(sectionKey => sectionKey.Key).ToList();
+            List<TaxFilingStatus> filingStatuses = Enum.GetValues(typeof(TaxFilingStatus)).Cast<TaxFilingStatus>().ToList();
 
             RuleFor(p => p.RequestModel.W4Type)
                 .NotEmpty().WithMessage("W4Type is required")
                 .NotNull().WithMessage("W4Type cannot be null")
-                .Must(p => listOfConfigs.Contains(p)).WithMessage($"W4Type name should match with one of the following: {string.Join(", ", listOfConfigs)}");
+                .Must(p => configs.Contains(p)).WithMessage($"W4Type name should match with one of the following: {string.Join(", ", configs)}");
 
             RuleFor(p => p.RequestModel.Data)
                 .NotEmpty().WithMessage("Data dictionary should not be empty")
@@ -23,7 +26,8 @@ namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.Get
 
             RuleFor(p => p.RequestModel.TaxFilingStatus)
                 .NotEmpty().WithMessage("TaxFilingStatus should not be empty")
-                .NotNull().WithMessage("TaxFilingStatus should not be null");
+                .NotNull().WithMessage("TaxFilingStatus should not be null")
+                .Must(p => filingStatuses.Contains(p)).WithMessage($"Allowed values are 1, 2, 3 for: {string.Join(", ", filingStatuses)}");
 
             RuleFor(p => p.RequestModel.TaxableWage)
                 .NotEmpty().WithMessage("TaxableWage should not be empty")
