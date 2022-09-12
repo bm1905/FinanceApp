@@ -1,6 +1,5 @@
 ﻿using FinancePlanner.TaxServices.Infrastructure.Persistence;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FinancePlanner.TaxServices.Infrastructure.Extensions
@@ -9,9 +8,10 @@ namespace FinancePlanner.TaxServices.Infrastructure.Extensions
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddSingleton<IDapperContext, DapperContext>();
-            services.AddSingleton<IFederalTaxBracketRepository, FederalTaxBracketRepository>();
-            services.AddSingleton<IFederalTaxBracketRepository>(b => new FederalTaxBracketRepository(b.GetRequiredService<IDapperContext>()));
+            services.AddScoped<IDapperContext, DapperContext>();
+            services.AddScoped<IMedicareTaxRepository, MedicareTaxRepository>();
+            services.AddScoped<ISocialSecurityTaxRepository, SocialSecurityTaxRepository>();
+            services.AddScoped<IFederalTaxRepository, FederalTaxRepository>();
             return services;
         }
     }

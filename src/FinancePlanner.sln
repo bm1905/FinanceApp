@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.Infrastructure", "Services\TaxServices\FinancePlanner.TaxServices.Infrastructure\FinancePlanner.TaxServices.Infrastructure.csproj", "{B38C4CD0-C8B7-4196-BE4C-F08420D01E18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxServices.Plugins.W4Before2020", "Services\TaxServices\Plugins\TaxServices.Plugins.W4Before2020\TaxServices.Plugins.W4Before2020.csproj", "{9C248965-C049-4827-864B-02DCCBC064BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxServices.Plugins.FedTax.W4Before2020", "Services\TaxServices\Plugins\TaxServices.Plugins.FedTax.W4Before2020\TaxServices.Plugins.FedTax.W4Before2020.csproj", "{9C248965-C049-4827-864B-02DCCBC064BD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.Domain", "Services\TaxServices\FinancePlanner.TaxServices.Domain\FinancePlanner.TaxServices.Domain.csproj", "{07B42D68-CF1C-4903-A40B-4982990D1809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxServices.Plugins.W4FromOrAfter2020", "Services\TaxServices\Plugins\TaxServices.Plugins.W4FromOrAfter2020\TaxServices.Plugins.W4FromOrAfter2020.csproj", "{0C7FD39D-A250-46CA-B674-1EAB739E4318}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxServices.Plugins.FedTax.W4FromOrAfter2020", "Services\TaxServices\Plugins\TaxServices.Plugins.FedTax.W4FromOrAfter2020\TaxServices.Plugins.FedTax.W4FromOrAfter2020.csproj", "{0C7FD39D-A250-46CA-B674-1EAB739E4318}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

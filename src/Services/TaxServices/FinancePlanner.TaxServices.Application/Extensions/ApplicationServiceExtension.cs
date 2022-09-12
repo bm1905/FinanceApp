@@ -1,8 +1,12 @@
 ﻿using System.Reflection;
 using FinancePlanner.TaxServices.Application.Behaviours;
+using FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler;
+using FinancePlanner.TaxServices.Application.Services.MedicareTaxServices;
+using FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices;
+using FinancePlanner.TaxServices.Application.Services.StateTaxServices;
+using FinancePlanner.TaxServices.Application.Services.TotalTaxesServices;
 using FluentValidation;
 using MediatR;
-using FinancePlanner.TaxServices.Application.PluginHandler;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
@@ -14,15 +18,21 @@ namespace FinancePlanner.TaxServices.Application.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddMediatR(typeof(PluginFactory).Assembly);
-            services.AddSingleton(serviceProvider =>
+            services.AddMediatR(typeof(FederalTaxPluginFactory).Assembly);
+            services.AddScoped(serviceProvider =>
             {
                 IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                IFederalTaxBracketRepository federalTaxBracketRepository = serviceProvider.GetRequiredService<IFederalTaxBracketRepository>();
-                PluginFactory pluginFactory = new PluginFactory(configuration, federalTaxBracketRepository);
+                IFederalTaxRepository federalTaxRepository = serviceProvider.GetRequiredService<IFederalTaxRepository>();
+                FederalTaxPluginFactory pluginFactory = new FederalTaxPluginFactory(configuration, federalTaxRepository);
                 pluginFactory.Initialize();
                 return pluginFactory;
             });
+            services.AddScoped<IStateTaxServices, StateTaxServices>();
+            services.AddScoped<IMedicareTaxServices, MedicareTaxServices>();
+            services.AddScoped<ISocialSecurityTaxServices, SocialSecurityTaxServices>();
+            //services.AddScoped<IFederalTaxRepository>(b => new FederalTaxRepository(b.GetRequiredService<IDapperContext>()));
+
+            services.AddScoped<ITotalTaxesServices, TotalTaxesServices>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             return services;
