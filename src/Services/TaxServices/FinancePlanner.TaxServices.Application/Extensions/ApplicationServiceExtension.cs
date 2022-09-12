@@ -30,8 +30,6 @@ namespace FinancePlanner.TaxServices.Application.Extensions
             services.AddScoped<IStateTaxServices, StateTaxServices>();
             services.AddScoped<IMedicareTaxServices, MedicareTaxServices>();
             services.AddScoped<ISocialSecurityTaxServices, SocialSecurityTaxServices>();
-            //services.AddScoped<IFederalTaxRepository>(b => new FederalTaxRepository(b.GetRequiredService<IDapperContext>()));
-
             services.AddScoped<ITotalTaxesServices, TotalTaxesServices>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
