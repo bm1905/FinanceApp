@@ -30,6 +30,7 @@ namespace FinancePlanner.TaxServices.Application.Extensions
             services.AddScoped<IStateTaxServices, StateTaxServices>();
             services.AddScoped<IMedicareTaxServices, MedicareTaxServices>();
             services.AddScoped<ISocialSecurityTaxServices, SocialSecurityTaxServices>();
+            services.AddScoped<IStateTaxServices, StateTaxServices>();
             services.AddScoped<ITotalTaxesServices, TotalTaxesServices>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

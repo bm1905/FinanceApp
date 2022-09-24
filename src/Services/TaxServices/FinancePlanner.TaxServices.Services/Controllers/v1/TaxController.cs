@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
+using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.TotalTaxes.Queries.GetTotalTaxesWithheld;
 using FinancePlanner.TaxServices.Application.Models;
 using MediatR;
@@ -21,7 +22,6 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
         public TaxController(IMediator mediator)
         {
             _mediator = mediator;
-
         }
 
         [MapToApiVersion("1.0")]
@@ -34,7 +34,7 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("CalculateFederalTaxWithheld")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ActionResult<GetFederalTaxWithheldQueryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -47,7 +47,7 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("CalculateMedicareTaxWithheld")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ActionResult<GetMedicareTaxWithheldQueryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -60,7 +60,7 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("CalculateSocialSecurityTaxWithheld")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ActionResult<GetSocialSecurityTaxWithheldQueryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -72,8 +72,21 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
         }
 
         [MapToApiVersion("1.0")]
+        [HttpPost("CalculateStateTaxWithheld")]
+        [ProducesResponseType(typeof(ActionResult<GetStateTaxWithheldQueryResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<GetStateTaxWithheldQueryResponse>> CalculateStateTaxWithheld([FromBody] CalculateTaxWithheldRequest request)
+        {
+            GetStateTaxWithheldQuery query = new GetStateTaxWithheldQuery(request);
+            GetStateTaxWithheldQueryResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [MapToApiVersion("1.0")]
         [HttpPost("CalculateTotalTaxesWithheld")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ActionResult<GetTotalTaxesWithheldQueryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

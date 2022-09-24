@@ -12,6 +12,7 @@ namespace FinancePlanner.TaxServices.Infrastructure.Extensions
             services.AddScoped<IMedicareTaxRepository, MedicareTaxRepository>();
             services.AddScoped<ISocialSecurityTaxRepository, SocialSecurityTaxRepository>();
             services.AddScoped<IFederalTaxRepository, FederalTaxRepository>();
+            services.AddScoped<IStateTaxRepository, StateTaxRepository>();
             return services;
         }
     }
