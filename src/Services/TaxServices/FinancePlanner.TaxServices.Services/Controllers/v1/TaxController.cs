@@ -5,10 +5,10 @@ using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMed
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.TotalTaxes.Queries.GetTotalTaxesWithheld;
-using FinancePlanner.TaxServices.Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Services.Controllers.v1
 {

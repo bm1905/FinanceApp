@@ -1,7 +1,7 @@
 ﻿using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
-using FinancePlanner.TaxServices.Application.Models;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using System.Threading.Tasks;
+using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
 {

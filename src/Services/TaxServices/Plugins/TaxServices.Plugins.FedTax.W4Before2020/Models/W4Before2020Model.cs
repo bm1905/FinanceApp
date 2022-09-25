@@ -1,4 +1,4 @@
-﻿using FinancePlanner.TaxServices.Application.Enums;
+﻿using Shared.Models.Enums;
 
 namespace TaxServices.Plugins.FedTax.W4Before2020.Models
 {

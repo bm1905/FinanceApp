@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
-using FinancePlanner.TaxServices.Application.Models;
 using FinancePlanner.TaxServices.Application.Services.FederalTaxServices;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
+using Shared.Models.TaxServices;
 using TaxServices.Plugins.FedTax.W4Before2020.Models;
 
 namespace TaxServices.Plugins.FedTax.W4Before2020

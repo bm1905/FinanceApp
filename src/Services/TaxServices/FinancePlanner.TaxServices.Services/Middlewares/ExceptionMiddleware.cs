@@ -2,10 +2,10 @@
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FinancePlanner.TaxServices.Application.Models.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Shared.Models.Exceptions;
 
 namespace FinancePlanner.TaxServices.Services.Middlewares
 {

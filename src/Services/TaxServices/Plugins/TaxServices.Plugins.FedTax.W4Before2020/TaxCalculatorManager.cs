@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Constants;
-using FinancePlanner.TaxServices.Application.Enums;
-using FinancePlanner.TaxServices.Application.Models;
-using FinancePlanner.TaxServices.Application.Models.Exceptions;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
+using Shared.Models.Enums;
+using Shared.Models.Exceptions;
+using Shared.Models.TaxServices;
 using TaxServices.Plugins.FedTax.W4Before2020.Models;
 
 namespace TaxServices.Plugins.FedTax.W4Before2020

@@ -23,6 +23,11 @@
       <PrivateAssets>false</PrivateAssets>
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Shared\Shared.Models\Shared.Models.csproj">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>false</PrivateAssets>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

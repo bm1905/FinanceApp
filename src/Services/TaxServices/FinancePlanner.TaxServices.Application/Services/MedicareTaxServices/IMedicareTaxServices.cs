@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld;
-using FinancePlanner.TaxServices.Application.Models;
+using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.MedicareTaxServices
 {

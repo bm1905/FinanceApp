@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using FinancePlanner.TaxServices.Application.Models.Exceptions;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
+using Shared.Models.Exceptions;
 
 namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler
 {

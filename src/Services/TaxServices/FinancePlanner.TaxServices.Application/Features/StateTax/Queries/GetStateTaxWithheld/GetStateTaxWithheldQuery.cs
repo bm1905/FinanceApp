@@ -1,5 +1,5 @@
-﻿using FinancePlanner.TaxServices.Application.Models;
-using MediatR;
+﻿using MediatR;
+using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld
 {

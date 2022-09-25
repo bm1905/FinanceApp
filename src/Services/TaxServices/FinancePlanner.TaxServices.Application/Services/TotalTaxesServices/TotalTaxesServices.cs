@@ -5,12 +5,12 @@ using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMed
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.TotalTaxes.Queries.GetTotalTaxesWithheld;
-using FinancePlanner.TaxServices.Application.Models;
 using FinancePlanner.TaxServices.Application.Services.FederalTaxServices;
 using FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler;
 using FinancePlanner.TaxServices.Application.Services.MedicareTaxServices;
 using FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices;
 using FinancePlanner.TaxServices.Application.Services.StateTaxServices;
+using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.TotalTaxesServices
 {

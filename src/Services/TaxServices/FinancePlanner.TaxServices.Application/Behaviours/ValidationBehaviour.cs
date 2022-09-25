@@ -5,8 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
-using ValidationException = FinancePlanner.TaxServices.Application.Models.Exceptions.ValidationException;
-
+using ValidationException = Shared.Models.Exceptions.ValidationException;
 
 namespace FinancePlanner.TaxServices.Application.Behaviours
 {
