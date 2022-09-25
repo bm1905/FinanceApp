@@ -1,6 +1,20 @@
-﻿namespace FinancePlanner.API.Aggregator.Models
+﻿using System.Collections.Generic;
+
+namespace FinancePlanner.API.Aggregator.Models
 {
     public class PayCheckResponse
+    {
+        public List<Response> Responses { get; set; }
+        public decimal TotalNetPay { get; set; }
+        public decimal TotalGrossPay { get; set; }
+
+        public PayCheckResponse()
+        {
+            Responses = new List<Response>();
+        }
+    }
+
+    public class Response
     {
         public decimal GrossPay { get; set; }
         public decimal NetPay { get; set; }

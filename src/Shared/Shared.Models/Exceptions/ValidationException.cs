@@ -10,7 +10,7 @@ namespace Shared.Models.Exceptions
 
         public ValidationException(Type type) : base($"{type} is missing") { }
 
-        protected ValidationException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public ValidationException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public ValidationException(string message) : base(message) { }
 

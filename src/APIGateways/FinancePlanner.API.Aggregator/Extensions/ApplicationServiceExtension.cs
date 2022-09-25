@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using FinancePlanner.API.Aggregator.Filters;
 using FinancePlanner.API.Aggregator.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Extensions.Http;
+using Polly.Retry;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FinancePlanner.API.Aggregator.Extensions
@@ -20,7 +24,7 @@ namespace FinancePlanner.API.Aggregator.Extensions
             services.AddSecurity(config);
             services.AddServiceDiscovery(config);
             services.AddHealthChecks(config);
-            services.AddHttpClient();
+            services.AddHttpClient(config);
             return services;
         }
 
@@ -32,16 +36,22 @@ namespace FinancePlanner.API.Aggregator.Extensions
         }
 
         // HTTP Client
-        private static void AddHttpClient(this IServiceCollection services)
+        private static void AddHttpClient(this IServiceCollection services, IConfiguration config)
         {
-            services.AddHttpClient("WageServices", client =>
+            AsyncRetryPolicy<HttpResponseMessage> retryPolicy = HttpPolicyExtensions
+                .HandleTransientHttpError() // HttpRequestException, 5XX and 408
+                .WaitAndRetryAsync(int.Parse(config.GetSection("Clients:RetryCount").Value), 
+                    retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+           
+            services.AddHttpClient(config.GetSection("Clients:WageServiceClient:ClientName").Value, client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7011");
-            });
-            services.AddHttpClient("TaxServices", client =>
+            }).AddPolicyHandler(retryPolicy);
+
+            services.AddHttpClient(config.GetSection("Clients:TaxServiceClient:ClientName").Value, client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7010");
-            });
+            }).AddPolicyHandler(retryPolicy);
         }
 
         // Health Check

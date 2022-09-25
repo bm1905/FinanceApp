@@ -10,7 +10,7 @@ namespace Shared.Models.Exceptions
 
         public BadRequestException(Type type) : base($"{type} is missing") { }
 
-        protected BadRequestException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public BadRequestException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public BadRequestException(string message) : base(message) { }
 

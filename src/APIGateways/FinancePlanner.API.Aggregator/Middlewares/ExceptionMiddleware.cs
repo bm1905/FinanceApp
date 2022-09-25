@@ -36,6 +36,7 @@ namespace FinancePlanner.API.Aggregator.Middlewares
                 {
                     BadRequestException => (int)HttpStatusCode.BadRequest,
                     NotFoundException => (int)HttpStatusCode.NotFound,
+                    ApiErrorException => (int)HttpStatusCode.BadRequest,
                     InternalServerErrorException => (int)HttpStatusCode.InternalServerError,
                     _ => (int)HttpStatusCode.InternalServerError
                 };

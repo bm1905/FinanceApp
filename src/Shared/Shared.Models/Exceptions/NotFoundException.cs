@@ -10,7 +10,7 @@ namespace Shared.Models.Exceptions
 
         public NotFoundException(Type type) : base($"{type} is missing") { }
 
-        protected NotFoundException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public NotFoundException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public NotFoundException(string message) : base(message) { }
 

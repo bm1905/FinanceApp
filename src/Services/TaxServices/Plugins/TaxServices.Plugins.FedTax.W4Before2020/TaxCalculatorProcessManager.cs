@@ -10,19 +10,19 @@ namespace TaxServices.Plugins.FedTax.W4Before2020
 {
     public class TaxCalculatorProcessManager : IFederalTaxServices
     {
-        public IConfiguration Configuration { get; }
         private readonly TaxCalculatorManager _taxCalculatorManager;
+        private readonly IConfiguration _configuration;
 
         public TaxCalculatorProcessManager(IConfiguration configuration, IFederalTaxRepository federalTaxBracketRepository)
         {
-            Configuration = configuration;
+            _configuration = configuration;
             _taxCalculatorManager = new TaxCalculatorManager(federalTaxBracketRepository);
         }
 
         public async Task<GetFederalTaxWithheldQueryResponse> CalculateFederalTaxWithheldAmount(CalculateTaxWithheldRequest model)
         {
             W4Before2020Model w4Before2020Model = _taxCalculatorManager.GetModel(model);
-            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4Before2020Model);
+            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4Before2020Model, _configuration);
             decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4Before2020Model, adjustedAnnualWage);
 
             GetFederalTaxWithheldQueryResponse response = new GetFederalTaxWithheldQueryResponse

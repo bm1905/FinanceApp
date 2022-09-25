@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Application.Constants;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 using Shared.Models.Enums;
 using Shared.Models.Exceptions;
 using Shared.Models.TaxServices;
@@ -91,57 +93,71 @@ namespace TaxServices.Plugins.FedTax.W4FromOrAfter2020
             return w4FromOrAfter2020Model;
         }
 
-        internal decimal GetAdjustedAnnualWage(W4FromOrAfter2020Model w4FromOrAfter2020Model)
+        internal decimal GetAdjustedAnnualWage(W4FromOrAfter2020Model w4FromOrAfter2020Model, IConfiguration config)
         {
-            decimal _1c = w4FromOrAfter2020Model.TaxableWage * w4FromOrAfter2020Model.PayPeriodNumber;
-            decimal _1d = w4FromOrAfter2020Model.OtherIncome;
-            decimal _1e = _1c + _1d;
-            decimal _1f = w4FromOrAfter2020Model.Deductions;
-            decimal _1g;
-            if (w4FromOrAfter2020Model.IsMultipleJobsChecked)
+            try
             {
-                _1g = 0;
+                decimal _1c = w4FromOrAfter2020Model.TaxableWage * w4FromOrAfter2020Model.PayPeriodNumber;
+                decimal _1d = w4FromOrAfter2020Model.OtherIncome;
+                decimal _1e = _1c + _1d;
+                decimal _1f = w4FromOrAfter2020Model.Deductions;
+                decimal _1g;
+                if (w4FromOrAfter2020Model.IsMultipleJobsChecked)
+                {
+                    _1g = 0;
+                }
+                else if (w4FromOrAfter2020Model.TaxFilingStatus == TaxFilingStatus.MarriedFilingJointly)
+                {
+                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:MarriedFilingJointly_1g").Value);
+                }
+                else
+                {
+                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:Otherwise_1g").Value);
+                }
+                decimal _1h = _1f + _1g;
+                decimal _1i = _1e - _1h;
+                if (_1i < 0) _1i = 0;
+                return _1i;
             }
-            else if (w4FromOrAfter2020Model.TaxFilingStatus == TaxFilingStatus.MarriedFilingJointly)
+            catch (Exception ex)
             {
-                _1g = 12900;
+                throw new InternalServerErrorException("Something went wrong while calculating Adjusted Annual Wage.", ex);
             }
-            else
-            {
-                _1g = 8600;
-            }
-            decimal _1h = _1f + _1g;
-            decimal _1i = _1e - _1h;
-            if (_1i < 0) _1i = 0;
-            return _1i;
         }
 
         internal async Task<decimal> GetFederalTaxWithheldAmount(W4FromOrAfter2020Model w4FromOrAfter2020Model, decimal adjustedAnnualWage)
         {
-            string tableName = w4FromOrAfter2020Model.TaxFilingStatus switch
+            try
             {
-                TaxFilingStatus.MarriedFilingJointly => TaxMethodTables.MarriedFiledJointlyW4Before2020,
-                TaxFilingStatus.SingleOrMarriedFilingSingle => TaxMethodTables.SingleOrMarriedFiledSeparatelyW4Before2020,
-                TaxFilingStatus.HeadOfHousehold => TaxMethodTables.HeadOfHouseholdW4Before2020,
-                _ => string.Empty,
-            };
+                string tableName = w4FromOrAfter2020Model.TaxFilingStatus switch
+                {
+                    TaxFilingStatus.MarriedFilingJointly => TaxMethodTables.MarriedFiledJointlyW4Before2020,
+                    TaxFilingStatus.SingleOrMarriedFilingSingle => TaxMethodTables.SingleOrMarriedFiledSeparatelyW4Before2020,
+                    TaxFilingStatus.HeadOfHousehold => TaxMethodTables.HeadOfHouseholdW4Before2020,
+                    _ => string.Empty,
+                };
 
-            PercentageMethodTable percentageMethodTable = await _federalTaxBracketRepository.GetFederalTaxPercentage(adjustedAnnualWage, tableName);
+                PercentageMethodTable percentageMethodTable = await _federalTaxBracketRepository.GetFederalTaxPercentage(adjustedAnnualWage, tableName);
 
-            decimal _2b = percentageMethodTable.AtLeast;
-            decimal _2c = percentageMethodTable.TentativeHoldAmount;
-            decimal _2d = percentageMethodTable.Percentage;
-            decimal _2e = adjustedAnnualWage - _2b;
-            decimal _2f = _2e * _2d / 100;
-            decimal _2g = _2c + _2f;
-            decimal _2h = _2g / w4FromOrAfter2020Model.PayPeriodNumber;
-            decimal _3a = w4FromOrAfter2020Model.ClaimDependentsAmount;
-            decimal _3b = _3a / w4FromOrAfter2020Model.PayPeriodNumber;
-            decimal _3c = _2h - _3b;
-            if (_3c < 0) _3c = 0;
-            decimal _4a = w4FromOrAfter2020Model.ExtraWithholding;
-            decimal _4b = _3c + _4a;
-            return _4b;
+                decimal _2b = percentageMethodTable.AtLeast;
+                decimal _2c = percentageMethodTable.TentativeHoldAmount;
+                decimal _2d = percentageMethodTable.Percentage;
+                decimal _2e = adjustedAnnualWage - _2b;
+                decimal _2f = _2e * _2d / 100;
+                decimal _2g = _2c + _2f;
+                decimal _2h = _2g / w4FromOrAfter2020Model.PayPeriodNumber;
+                decimal _3a = w4FromOrAfter2020Model.ClaimDependentsAmount;
+                decimal _3b = _3a / w4FromOrAfter2020Model.PayPeriodNumber;
+                decimal _3c = _2h - _3b;
+                if (_3c < 0) _3c = 0;
+                decimal _4a = w4FromOrAfter2020Model.ExtraWithholding;
+                decimal _4b = _3c + _4a;
+                return _4b;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerErrorException("Something went wrong while calculating Federal Tax Withheld Amount.", ex);
+            }
         }
     }
 }

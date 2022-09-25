@@ -7,6 +7,11 @@ namespace FinancePlanner.API.Aggregator.Models
     public class PayCheckRequest
     {
         public List<Company> Companies { get; set; }
+
+        public PayCheckRequest()
+        {
+            Companies = new List<Company>();
+        }
     }
 
     public class Company

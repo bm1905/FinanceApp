@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FinancePlanner.API.Aggregator.Models;
+using Microsoft.Extensions.Configuration;
 using Shared.Models.Exceptions;
 using Shared.Models.TaxServices;
 using Shared.Models.WageServices;
@@ -12,107 +13,65 @@ namespace FinancePlanner.API.Aggregator.Services
     public class PayCheckService : IPayCheckService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _config;
 
-        public PayCheckService(IHttpClientFactory httpClientFactory)
+        public PayCheckService(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
+            _config = config;
         }
 
         public async Task<PayCheckResponse> CalculatePayCheck(PayCheckRequest request)
         {
-            PayCheckResponse finalPayCheckResponse = new PayCheckResponse();
+            PayCheckResponse finalPayCheckResponse = new();
             foreach (Company requestCompany in request.Companies)
             {
-                PayCheckResponse payCheckResponse = await CalculatePayForEachCompany(requestCompany);
-                finalPayCheckResponse.GrossPay += payCheckResponse.GrossPay;
-                finalPayCheckResponse.NetPay += payCheckResponse.NetPay;
-                finalPayCheckResponse.PostTaxDeductions += payCheckResponse.PostTaxDeductions;
-                finalPayCheckResponse.PreTaxDeductions += payCheckResponse.PreTaxDeductions;
-                finalPayCheckResponse.TotalTax += payCheckResponse.TotalTax;
+                Response payCheckResponse = await CalculatePayForEachCompany(requestCompany, _config);
+                finalPayCheckResponse.Responses.Add(payCheckResponse);
+                finalPayCheckResponse.TotalGrossPay += payCheckResponse.GrossPay;
+                finalPayCheckResponse.TotalNetPay += payCheckResponse.NetPay;
             }
             return finalPayCheckResponse;
         }
 
-        private async Task<PayCheckResponse> CalculatePayForEachCompany(Company requestCompany)
+        private async Task<Response> CalculatePayForEachCompany(Company requestCompany, IConfiguration config)
         {
-            CalculateTaxWithheldRequest calculateTaxWithheldRequest = new CalculateTaxWithheldRequest();
-            PostTaxDeductionRequest postTaxDeductionRequest = new PostTaxDeductionRequest();
+            // Pre-Tax
+            PreTaxWagesResponse preTaxWagesResponse = await PostAsync<PreTaxWagesRequest, PreTaxWagesResponse>(requestCompany.PreTaxWagesRequest,
+                config.GetSection("Clients:WageServiceClient:ClientName").Value,
+                config.GetSection("Clients:WageServiceClient:CalculateTotalTaxableWages").Value);
 
-            JsonSerializerOptions options = new JsonSerializerOptions
+            // Tax
+            CalculateTaxWithheldRequest calculateTaxWithheldRequest = new()
             {
-                PropertyNameCaseInsensitive = true
+                Data = requestCompany.Data,
+                W4Type = requestCompany.W4Type,
+                TaxFilingStatus = requestCompany.TaxFilingStatus,
+                PayPeriodNumber = requestCompany.PayPeriodNumber,
+                State = requestCompany.State,
+                FederalTaxableWage = preTaxWagesResponse.StateAndFederalTaxableWages,
+                StateTaxableWage = preTaxWagesResponse.StateAndFederalTaxableWages,
+                MedicareTaxableWage = preTaxWagesResponse.SocialAndMedicareTaxableWages,
+                SocialSecurityTaxableWage = preTaxWagesResponse.SocialAndMedicareTaxableWages
             };
-            
-            calculateTaxWithheldRequest.Data = requestCompany.Data;
-            calculateTaxWithheldRequest.W4Type = requestCompany.W4Type;
-            calculateTaxWithheldRequest.TaxFilingStatus = requestCompany.TaxFilingStatus;
-            calculateTaxWithheldRequest.PayPeriodNumber = requestCompany.PayPeriodNumber;
-            calculateTaxWithheldRequest.State = requestCompany.State;
-            postTaxDeductionRequest.Roth401KPercentage = requestCompany.PostTaxDeductionRequest.Roth401KPercentage;
-            postTaxDeductionRequest.EmployeeStockPlan = requestCompany.PostTaxDeductionRequest.EmployeeStockPlan;
-            postTaxDeductionRequest.OtherDeductions = requestCompany.PostTaxDeductionRequest.OtherDeductions;
+            TotalTaxesWithheldResponse totalTaxesWithheldResponse = await PostAsync<CalculateTaxWithheldRequest, TotalTaxesWithheldResponse>(calculateTaxWithheldRequest,
+                config.GetSection("Clients:TaxServiceClient:ClientName").Value,
+                config.GetSection("Clients:TaxServiceClient:CalculateTotalTaxesWithheld").Value);
 
-            string preTaxWagesRequestJson = JsonSerializer.Serialize(requestCompany.PreTaxWagesRequest);
-            StringContent preTaxWagesRequestContent = new StringContent(preTaxWagesRequestJson, Encoding.UTF8, "application/json");
-
-            HttpClient wageServicesClient = _httpClientFactory.CreateClient("WageServices");
-            HttpResponseMessage wageServicesResponse = await wageServicesClient.PostAsync("/api/v1/Wage/CalculateTotalTaxableWages", preTaxWagesRequestContent);
-            if (!wageServicesResponse.IsSuccessStatusCode)
+            // Post-Tax
+            PostTaxDeductionRequest postTaxDeductionRequest = new()
             {
-                throw new InternalServerErrorException($"WageServices API call failed with code {wageServicesResponse.StatusCode}");
-            }
+                Roth401KPercentage = requestCompany.PostTaxDeductionRequest.Roth401KPercentage,
+                EmployeeStockPlan = requestCompany.PostTaxDeductionRequest.EmployeeStockPlan,
+                OtherDeductions = requestCompany.PostTaxDeductionRequest.OtherDeductions,
+                TotalGrossPay = preTaxWagesResponse.GrossPay
+            };
+            PostTaxDeductionResponse postTaxDeductionResponse = await PostAsync<PostTaxDeductionRequest, PostTaxDeductionResponse>(postTaxDeductionRequest,
+                config.GetSection("Clients:WageServiceClient:ClientName").Value,
+                config.GetSection("Clients:WageServiceClient:CalculatePostTaxDeductions").Value);
 
-            string wageServicesResponseString = await wageServicesResponse.Content.ReadAsStringAsync();
-            PreTaxWagesResponse preTaxWagesResponse = JsonSerializer.Deserialize<PreTaxWagesResponse>(wageServicesResponseString, options);
-
-            if (preTaxWagesResponse == null)
-            {
-                throw new InternalServerErrorException("PreTaxWagesResponse is empty or null");
-            }
-
-            calculateTaxWithheldRequest.FederalTaxableWage = preTaxWagesResponse.StateAndFederalTaxableWages;
-            calculateTaxWithheldRequest.StateTaxableWage = preTaxWagesResponse.StateAndFederalTaxableWages;
-            calculateTaxWithheldRequest.MedicareTaxableWage = preTaxWagesResponse.SocialAndMedicareTaxableWages;
-            calculateTaxWithheldRequest.SocialSecurityTaxableWage = preTaxWagesResponse.SocialAndMedicareTaxableWages;
-
-            string calculateTaxWithheldRequestJson = JsonSerializer.Serialize(calculateTaxWithheldRequest);
-            StringContent calculateTaxWithheldRequestContent = new StringContent(calculateTaxWithheldRequestJson, Encoding.UTF8, "application/json");
-
-            HttpClient taxServicesClient = _httpClientFactory.CreateClient("TaxServices");
-            HttpResponseMessage taxServicesResponse = await taxServicesClient.PostAsync("/api/v1/Tax/CalculateTotalTaxesWithheld", calculateTaxWithheldRequestContent);
-            if (!taxServicesResponse.IsSuccessStatusCode)
-            {
-                throw new InternalServerErrorException($"TaxServices API call failed with code {taxServicesResponse.StatusCode}");
-            }
-
-            string taxServicesResponseString = await taxServicesResponse.Content.ReadAsStringAsync();
-            TotalTaxesWithheldResponse totalTaxesWithheldResponse = JsonSerializer.Deserialize<TotalTaxesWithheldResponse>(taxServicesResponseString, options);
-
-            if (totalTaxesWithheldResponse == null)
-            {
-                throw new InternalServerErrorException("TotalTaxesWithheldResponse is empty or null");
-            }
-
-            postTaxDeductionRequest.TotalGrossPay = preTaxWagesResponse.GrossPay;
-
-            string postTaxDeductionRequestJson = JsonSerializer.Serialize(postTaxDeductionRequest);
-            StringContent postTaxDeductionRequestContent = new StringContent(postTaxDeductionRequestJson, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage postTaxServicesResponse = await wageServicesClient.PostAsync("/api/v1/Wage/CalculatePostTaxDeductions", postTaxDeductionRequestContent);
-            if (!postTaxServicesResponse.IsSuccessStatusCode)
-            {
-                throw new InternalServerErrorException($"WageServices API call failed with code {postTaxServicesResponse.StatusCode}");
-            }
-
-            string postTaxServicesResponseString = await postTaxServicesResponse.Content.ReadAsStringAsync();
-            PostTaxDeductionResponse postTaxDeductionResponse = JsonSerializer.Deserialize<PostTaxDeductionResponse>(postTaxServicesResponseString, options);
-
-            if (postTaxDeductionResponse == null)
-            {
-                throw new InternalServerErrorException("PostTaxDeductionResponse is empty or null");
-            }
-
-            PayCheckResponse response = new()
+            // Response
+            Response response = new()
             {
                 GrossPay = preTaxWagesResponse.GrossPay,
                 NetPay = preTaxWagesResponse.GrossPay - preTaxWagesResponse.TotalPreTaxDeductions -
@@ -122,8 +81,39 @@ namespace FinancePlanner.API.Aggregator.Services
                 PreTaxDeductions = preTaxWagesResponse.TotalPreTaxDeductions,
                 TotalTax = totalTaxesWithheldResponse.TotalTaxesWithheldAmount
             };
-
             return response;
+        }
+
+        private async Task<TResponse> PostAsync<TRequest, TResponse>(TRequest model, string clientName, string url)
+        {
+            JsonSerializerOptions options = new()
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            string requestJson = JsonSerializer.Serialize(model);
+            StringContent requestContent = new(requestJson, Encoding.UTF8, "application/json");
+            HttpClient client = _httpClientFactory.CreateClient(clientName);
+            HttpResponseMessage response = await client.PostAsync(url, requestContent);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorResponse = await response.Content.ReadAsStringAsync();
+                ExceptionModel exceptionModel = JsonSerializer.Deserialize<ExceptionModel>(errorResponse, options);
+                if (exceptionModel == null)
+                {
+                    throw new InternalServerErrorException($"API call error out with {response.StatusCode}");
+                }
+                throw new ApiErrorException(exceptionModel.Message, exceptionModel.Details);
+            }
+
+            string responseString = await response.Content.ReadAsStringAsync();
+            TResponse responseModel = JsonSerializer.Deserialize<TResponse>(responseString, options);
+            if (responseModel == null)
+            {
+                throw new InternalServerErrorException($"{nameof(TResponse)} is empty or null");
+            }
+
+            return responseModel;
         }
     }
 }
