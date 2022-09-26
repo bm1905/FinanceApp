@@ -1,4 +1,4 @@
 # FinancePlanner Application
 
-# Architecture
+# Architectures
 ![Alt text here](TaxServices-Project-Structure.png)
