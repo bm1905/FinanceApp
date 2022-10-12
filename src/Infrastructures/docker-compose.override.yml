@@ -1,0 +1,125 @@
+version: '3.4'
+
+services:
+
+#Part of dev infrastructure
+  
+  # Portainer to view docker images
+  portainer-dev:
+    container_name: portainer-dev
+    restart: always
+    ports:
+      - "8080:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  # Mongo GUI
+  mongo-express-dev:
+    container_name: mongo-express-dev
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: testaccount
+      ME_CONFIG_MONGODB_ADMINPASSWORD: testaccount
+      ME_CONFIG_MONGODB_SERVER: finance-planner-mongodb-dev
+    depends_on:
+      - finance-planner-mongodb-dev
+
+  # PG Admin GUI
+  pgadmin-dev:
+    container_name: pgadmin-dev
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=bijay.maharjan5@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=testaccount
+    restart: always
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+  # Redis database
+  finance-planner-redis-dev:
+    container_name: finance-planner-redis-dev
+    restart: always
+    ports:
+      - "6379:6379" 
+
+  # Mongo Database
+  finance-planner-mongodb-dev:
+    container_name: finance-planner-mongodb-dev
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: testaccount
+      MONGO_INITDB_ROOT_PASSWORD: testaccount
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # PostgreSQL database
+  finance-planner-postgresdb-dev:
+    container_name: finance-planner-postgresdb-dev
+    environment:
+      - POSTGRES_USER=testaccount
+      - POSTGRES_PASSWORD=testaccount
+      - POSTGRES_DB=finance-planner-postgresdb-dev
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  # SQL Server Database for Identity Server
+  identity-server-sqldb-dev:
+    container_name: identity-server-sqldb-dev
+    environment:
+      SA_PASSWORD: "testaccount!23"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1401:1433"
+
+  # SQL Server Database for Tax Service
+  tax-service-sqldb-dev:
+    container_name: tax-service-sqldb-dev
+    environment:
+      SA_PASSWORD: "testaccount!23"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1402:1433"
+
+  # Elasticsearch to collect logs
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  # Kibana to display logs
+  kibana-dev:
+    container_name: kibana-dev
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+  
+  # Consul for service discovery
+  consul-dev:
+    container_name: consul-dev
+    restart: always
+    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
+    hostname: consul
+    ports:
+      - "8500:8500"

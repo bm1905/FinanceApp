@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Logger;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IConfiguration configuration = builder.Configuration;
 //IWebHostEnvironment environment = builder.Environment;
 
 // Add services to the container.
+builder.Host.UseSerilog(SeriLogger.Configure);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -98,7 +98,7 @@ namespace TaxServices.Plugins.FedTax.W4Before2020
             }
             catch (Exception ex)
             {
-                throw new InternalServerErrorException("Something went wrong while calculating Federal Tax Withheld Amount.", ex);
+                throw new InternalServerErrorException($"Something went wrong while calculating Federal Tax Withheld Amount. {ex.Message}", ex);
             }
         }
     }

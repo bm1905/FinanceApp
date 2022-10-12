@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+
+#Part of dev infrastructure
+  
+  # Portainer to view docker images
+  portainer-dev:
+    image: portainer/portainer-ce
+
+  # Mongo GUI
+  mongo-express-dev:
+    image: mongo-express
+
+  # Postgres Admin GUI
+  pgadmin-dev:
+    image: dpage/pgadmin4
+
+  # Redis Database
+  finance-planner-redis-dev:
+    image: redis:alpine
+
+  # Mongo Database
+  finance-planner-mongodb-dev:
+    image: mongo
+
+  # PostgreSQL Database
+  finance-planner-postgresdb-dev:
+    image: postgres:alpine
+
+  # SQL server for Identity Server
+  identity-server-sqldb-dev:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
+  # SQL server for Tax Services
+  tax-service-sqldb-dev:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
+  # Elasticsearch to collect logs
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+
+  # Kibana to display logs
+  kibana-dev:
+    image: docker.elastic.co/kibana/kibana:7.9.2
+
+ # Consul for service discovery
+  consul-dev:
+    image: consul
+
+volumes:
+  mongo_data:
+  portainer_data:
+  elasticsearch-data:
+  postgres_data:
+  pgadmin_data:
