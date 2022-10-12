@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32802.440
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{0DA21294-40FE-49A6-AA5C-0EF3D4240A0F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.App", "Client\FinancePlanner.App\FinancePlanner.App.csproj", "{863B86E6-4EC6-4AB0-B84E-F07EEBEA7CD1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{3447A980-CD95-4134-BC93-67DDCC585A81}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.Services", "Services\TaxServices\FinancePlanner.TaxServices.Services\FinancePlanner.TaxServices.Services.csproj", "{FDF959C5-0473-46EA-8CE3-F8A481DA8AA4}"
