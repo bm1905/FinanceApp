@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
+using ServiceDiscovery;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FinancePlanner.API.Aggregator.Extensions
@@ -68,7 +69,8 @@ namespace FinancePlanner.API.Aggregator.Extensions
         // Service Discovery
         private static void AddServiceDiscovery(this IServiceCollection services, IConfiguration config)
         {
-
+            ServiceConfig serviceConfig = config.GetServiceConfig();
+            services.RegisterConsulServices(serviceConfig);
         }
 
         // Swagger

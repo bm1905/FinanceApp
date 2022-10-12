@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using ServiceDiscovery;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FinancePlanner.TaxServices.Services.Extensions
@@ -33,7 +34,8 @@ namespace FinancePlanner.TaxServices.Services.Extensions
         // Service Discovery
         private static void AddServiceDiscovery(this IServiceCollection services, IConfiguration config)
         {
-
+            ServiceConfig serviceConfig = config.GetServiceConfig();
+            services.RegisterConsulServices(serviceConfig);
         }
 
         // Swagger
