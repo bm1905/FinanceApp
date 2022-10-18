@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,6 +7,13 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
   </Target>
+  <ItemGroup>
+    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.1">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>false</PrivateAssets>
+      <Private>false</Private>
+    </PackageReference>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FinancePlanner.TaxServices.Application\FinancePlanner.TaxServices.Application.csproj">
       <ExcludeAssets>runtime</ExcludeAssets>
@@ -19,11 +26,6 @@
       <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\FinancePlanner.TaxServices.Infrastructure\FinancePlanner.TaxServices.Infrastructure.csproj">
-      <ExcludeAssets>runtime</ExcludeAssets>
-      <PrivateAssets>false</PrivateAssets>
-      <Private>false</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Shared\Shared.Models\Shared.Models.csproj">
       <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>false</PrivateAssets>
       <Private>false</Private>

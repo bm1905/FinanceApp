@@ -21,23 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.TaxServices.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxServices.Plugins.FedTax.W4FromOrAfter2020", "Services\TaxServices\Plugins\TaxServices.Plugins.FedTax.W4FromOrAfter2020\TaxServices.Plugins.FedTax.W4FromOrAfter2020.csproj", "{0C7FD39D-A250-46CA-B674-1EAB739E4318}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIGateways", "APIGateways", "{28FC7B5B-483C-47FF-AA99-AFD4BDF03582}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiAggregator", "ApiAggregator", "{28FC7B5B-483C-47FF-AA99-AFD4BDF03582}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.API.Aggregator", "APIGateways\FinancePlanner.API.Aggregator\FinancePlanner.API.Aggregator.csproj", "{90E5588F-480E-43E2-A16F-D4BD8921892D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.API.Aggregator", "ApiAggregator\FinancePlanner.API.Aggregator\FinancePlanner.API.Aggregator.csproj", "{90E5588F-480E-43E2-A16F-D4BD8921892D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WageServices", "WageServices", "{0D3A87E6-0199-42F4-9BD9-4C0D7964F10D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinancePlanner.WageServices.Services", "Services\WageServices\FinancePlanner.WageServices.Services\FinancePlanner.WageServices.Services.csproj", "{B1883218-3AB3-4D12-8615-AB04EB48DED6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{3E3C7433-D3D7-473C-890A-88F376818C73}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Models", "Shared\Shared.Models\Shared.Models.csproj", "{73B53A32-4B21-4280-A248-89550E2EFE10}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructures", "Infrastructures", "{DA739435-8EEF-4062-BCBC-4F735F4CAA39}"
-	ProjectSection(SolutionItems) = preProject
-		Infrastructures\docker-compose.override.yml = Infrastructures\docker-compose.override.yml
-		Infrastructures\docker-compose.yml = Infrastructures\docker-compose.yml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,10 +67,6 @@ Global
 		{B1883218-3AB3-4D12-8615-AB04EB48DED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1883218-3AB3-4D12-8615-AB04EB48DED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1883218-3AB3-4D12-8615-AB04EB48DED6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73B53A32-4B21-4280-A248-89550E2EFE10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73B53A32-4B21-4280-A248-89550E2EFE10}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73B53A32-4B21-4280-A248-89550E2EFE10}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73B53A32-4B21-4280-A248-89550E2EFE10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,7 +83,6 @@ Global
 		{90E5588F-480E-43E2-A16F-D4BD8921892D} = {28FC7B5B-483C-47FF-AA99-AFD4BDF03582}
 		{0D3A87E6-0199-42F4-9BD9-4C0D7964F10D} = {3447A980-CD95-4134-BC93-67DDCC585A81}
 		{B1883218-3AB3-4D12-8615-AB04EB48DED6} = {0D3A87E6-0199-42F4-9BD9-4C0D7964F10D}
-		{73B53A32-4B21-4280-A248-89550E2EFE10} = {3E3C7433-D3D7-473C-890A-88F376818C73}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5FE750FF-F412-4267-A0D6-AE0ED0791DDB}
