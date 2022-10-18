@@ -46,12 +46,12 @@ namespace FinancePlanner.API.Aggregator.Extensions
            
             services.AddHttpClient(config.GetSection("Clients:WageServiceClient:ClientName").Value, client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7011");
+                client.BaseAddress = new Uri(config.GetSection("Clients:WageServiceClient:BaseURL").Value);
             }).AddPolicyHandler(retryPolicy);
 
             services.AddHttpClient(config.GetSection("Clients:TaxServiceClient:ClientName").Value, client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7010");
+                client.BaseAddress = new Uri(config.GetSection("Clients:TaxServiceClient:BaseURL").Value);
             }).AddPolicyHandler(retryPolicy);
         }
 
