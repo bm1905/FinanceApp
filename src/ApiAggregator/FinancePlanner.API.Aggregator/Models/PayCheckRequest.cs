@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Shared.Models.Enums;
-using Shared.Models.WageServices;
+using FinancePlanner.Shared.Models.Enums;
+using FinancePlanner.Shared.Models.WageServices;
 
 namespace FinancePlanner.API.Aggregator.Models
 {
@@ -22,6 +22,6 @@ namespace FinancePlanner.API.Aggregator.Models
         public int PayPeriodNumber { get; set; }
         public string State { get; set; }
         public Dictionary<string, string> Data { get; set; }
-        public PostTaxDeduction PostTaxDeductionRequest { get; set; }
+        public PostTaxDeductionRequest PostTaxDeductionRequest { get; set; }
     }
 }

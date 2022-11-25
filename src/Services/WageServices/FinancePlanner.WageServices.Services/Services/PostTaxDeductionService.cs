@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Shared.Models.Exceptions;
-using Shared.Models.WageServices;
+using FinancePlanner.Shared.Models.Exceptions;
+using FinancePlanner.Shared.Models.WageServices;
 
 namespace FinancePlanner.WageServices.Services.Services
 {

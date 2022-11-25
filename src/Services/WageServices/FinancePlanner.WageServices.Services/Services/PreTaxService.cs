@@ -1,6 +1,6 @@
 ﻿using System;
-using Shared.Models.Exceptions;
-using Shared.Models.WageServices;
+using FinancePlanner.Shared.Models.Exceptions;
+using FinancePlanner.Shared.Models.WageServices;
 
 namespace FinancePlanner.WageServices.Services.Services
 {
@@ -23,19 +23,19 @@ namespace FinancePlanner.WageServices.Services.Services
                     totalGrossPay += regularHours * rate + weeklyHour.TimeOffHours * rate + overTime * (rate + rate / 2);
                 }
 
-                decimal totalPreTaxDeductions = request.PreTaxDeduction.Dental +
-                                               request.PreTaxDeduction.HealthSavingAccount +
-                                               request.PreTaxDeduction.Medical +
-                                               request.PreTaxDeduction.Vision +
-                                               request.PreTaxDeduction.Others +
-                                               request.PreTaxDeduction.Traditional401KPercentage / 100 * totalGrossPay;
+                decimal totalPreTaxDeductions = request.Dental +
+                                               request.HealthSavingAccount +
+                                               request.Medical +
+                                               request.Vision +
+                                               request.Others +
+                                               request.Traditional401KPercentage / 100 * totalGrossPay;
 
 
                 return new PreTaxWagesResponse()
                 {
                     GrossPay = totalGrossPay,
                     TotalPreTaxDeductions = totalPreTaxDeductions,
-                    SocialAndMedicareTaxableWages = totalGrossPay - totalPreTaxDeductions + request.PreTaxDeduction.Traditional401KPercentage / 100 * totalGrossPay,
+                    SocialAndMedicareTaxableWages = totalGrossPay - totalPreTaxDeductions + request.Traditional401KPercentage / 100 * totalGrossPay,
                     StateAndFederalTaxableWages = totalGrossPay - totalPreTaxDeductions
                 };
             }

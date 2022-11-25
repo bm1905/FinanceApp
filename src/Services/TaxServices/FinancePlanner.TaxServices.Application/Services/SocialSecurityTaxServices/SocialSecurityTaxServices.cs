@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
-using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices
 {

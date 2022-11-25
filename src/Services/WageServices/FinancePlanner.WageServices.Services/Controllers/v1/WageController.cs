@@ -1,9 +1,9 @@
 ﻿using System.Net;
+using FinancePlanner.Shared.Models.WageServices;
 using FinancePlanner.WageServices.Services.Filters;
 using FinancePlanner.WageServices.Services.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models.WageServices;
 
 namespace FinancePlanner.WageServices.Services.Controllers.v1
 {

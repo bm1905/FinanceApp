@@ -1,18 +1,20 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.TotalTaxes.Queries.GetTotalTaxesWithheld;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Services.Controllers.v1
 {
     [ApiController]
+    //[Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class TaxController : ControllerBase
@@ -24,6 +26,7 @@ namespace FinancePlanner.TaxServices.Services.Controllers.v1
             _mediator = mediator;
         }
 
+        [AllowAnonymous]
         [MapToApiVersion("1.0")]
         [HttpGet("Test")]
         [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]

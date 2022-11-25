@@ -1,4 +1,4 @@
-﻿using Shared.Models.WageServices;
+﻿using FinancePlanner.Shared.Models.WageServices;
 
 namespace FinancePlanner.WageServices.Services.Services
 {

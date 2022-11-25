@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld;
 using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld;
@@ -10,7 +11,6 @@ using FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginH
 using FinancePlanner.TaxServices.Application.Services.MedicareTaxServices;
 using FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices;
 using FinancePlanner.TaxServices.Application.Services.StateTaxServices;
-using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.TotalTaxesServices
 {

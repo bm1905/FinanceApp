@@ -2,10 +2,10 @@
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Shared.Models.Exceptions;
 
 namespace FinancePlanner.API.Aggregator.Middlewares
 {
@@ -36,6 +36,7 @@ namespace FinancePlanner.API.Aggregator.Middlewares
                 {
                     BadRequestException => (int)HttpStatusCode.BadRequest,
                     NotFoundException => (int)HttpStatusCode.NotFound,
+                    UnauthorizedException => (int)HttpStatusCode.Unauthorized,
                     ApiErrorException => (int)HttpStatusCode.BadRequest,
                     InternalServerErrorException => (int)HttpStatusCode.InternalServerError,
                     _ => (int)HttpStatusCode.InternalServerError

@@ -8,10 +8,11 @@
     <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.1">
+    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.5">
       <ExcludeAssets>runtime</ExcludeAssets>
-      <PrivateAssets>false</PrivateAssets>
+      <PrivateAssets>none</PrivateAssets>
       <Private>false</Private>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

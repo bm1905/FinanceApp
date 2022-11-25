@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Shared.Models.TaxServices;
+﻿using FinancePlanner.Shared.Models.TaxServices;
+using MediatR;
 
 namespace FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld
 {

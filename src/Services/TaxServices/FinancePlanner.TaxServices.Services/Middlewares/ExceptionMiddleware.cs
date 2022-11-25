@@ -2,10 +2,10 @@
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Shared.Models.Exceptions;
 
 namespace FinancePlanner.TaxServices.Services.Middlewares
 {
@@ -36,6 +36,7 @@ namespace FinancePlanner.TaxServices.Services.Middlewares
                 {
                     BadRequestException => (int)HttpStatusCode.BadRequest,
                     ValidationException => (int)HttpStatusCode.BadRequest,
+                    UnauthorizedException => (int)HttpStatusCode.Unauthorized,
                     NotFoundException => (int)HttpStatusCode.NotFound,
                     InternalServerErrorException => (int)HttpStatusCode.InternalServerError,
                     _ => (int)HttpStatusCode.InternalServerError

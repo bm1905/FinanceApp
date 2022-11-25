@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinancePlanner.Shared.Models.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
-using Shared.Models.Enums;
 
 namespace FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.GetSocialSecurityTaxWithheld
 {

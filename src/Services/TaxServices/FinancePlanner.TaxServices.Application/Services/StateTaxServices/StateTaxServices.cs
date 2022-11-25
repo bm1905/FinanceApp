@@ -1,7 +1,7 @@
 ﻿using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using System.Threading.Tasks;
-using Shared.Models.TaxServices;
+using FinancePlanner.Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
 {
@@ -13,6 +13,7 @@ namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
         {
             _stateTaxRepository = stateTaxRepository;
         }
+
         public async Task<GetStateTaxWithheldQueryResponse> CalculateStateTaxWithheldAmount(CalculateTaxWithheldRequest request)
         {
             GetStateTaxWithheldQueryResponse response = new()
@@ -21,7 +22,7 @@ namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
                 StateWithheldAmount = 0
             };
 
-            return response;
+            return await Task.FromResult(response);
         }
     }
 }

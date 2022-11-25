@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.Enums;
+using FinancePlanner.Shared.Models.Exceptions;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Constants;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
-using Shared.Models.Enums;
-using Shared.Models.Exceptions;
-using Shared.Models.TaxServices;
 using TaxServices.Plugins.FedTax.W4Before2020.Models;
 
 namespace TaxServices.Plugins.FedTax.W4Before2020
@@ -62,7 +62,7 @@ namespace TaxServices.Plugins.FedTax.W4Before2020
             try
             {
                 decimal _1c = w4Before2020Model.TaxableWage * w4Before2020Model.PayPeriodNumber;
-                decimal _1k = w4Before2020Model.AllowanceNumber * int.Parse(config.GetSection("W4Config:W4Before2020:Allowance_1k").Value);
+                decimal _1k = w4Before2020Model.AllowanceNumber * int.Parse(config.GetSection("W4Config:W4Before2020:Allowance_1k").Value ?? "4300");
                 decimal _1l = _1c - _1k;
                 if (_1l < 0) _1l = 0;
                 return _1l;

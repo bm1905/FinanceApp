@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
-using Shared.Models.TaxServices;
 
 namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices
 {

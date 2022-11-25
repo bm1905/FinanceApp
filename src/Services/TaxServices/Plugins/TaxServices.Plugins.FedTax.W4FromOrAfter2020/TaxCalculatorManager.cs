@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.Enums;
+using FinancePlanner.Shared.Models.Exceptions;
+using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Constants;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
-using Shared.Models.Enums;
-using Shared.Models.Exceptions;
-using Shared.Models.TaxServices;
 using TaxServices.Plugins.FedTax.W4FromOrAfter2020.Models;
 
 namespace TaxServices.Plugins.FedTax.W4FromOrAfter2020
@@ -108,11 +108,11 @@ namespace TaxServices.Plugins.FedTax.W4FromOrAfter2020
                 }
                 else if (w4FromOrAfter2020Model.TaxFilingStatus == TaxFilingStatus.MarriedFilingJointly)
                 {
-                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:MarriedFilingJointly_1g").Value);
+                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:MarriedFilingJointly_1g").Value ?? "12900");
                 }
                 else
                 {
-                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:Otherwise_1g").Value);
+                    _1g = int.Parse(config.GetSection("W4Config:W4FromOrAfter2020:Otherwise_1g").Value ?? "8600");
                 }
                 decimal _1h = _1f + _1g;
                 decimal _1i = _1e - _1h;

@@ -1,12 +1,13 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FinancePlanner.API.Aggregator.Models;
+using FinancePlanner.Shared.Models.Exceptions;
+using FinancePlanner.Shared.Models.TaxServices;
+using FinancePlanner.Shared.Models.WageServices;
 using Microsoft.Extensions.Configuration;
-using Shared.Models.Exceptions;
-using Shared.Models.TaxServices;
-using Shared.Models.WageServices;
 
 namespace FinancePlanner.API.Aggregator.Services
 {
@@ -95,15 +96,21 @@ namespace FinancePlanner.API.Aggregator.Services
             HttpClient client = _httpClientFactory.CreateClient(clientName);
             HttpResponseMessage response = await client.PostAsync(url, requestContent);
 
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedException($"Request: {response.StatusCode}", $"The request for client {clientName} and endpoint {url} is not authorized.");
+            }
+
             if (!response.IsSuccessStatusCode)
             {
                 string errorResponse = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorResponse)) throw new InternalServerErrorException($"API call error out with status {response.StatusCode}");
                 ExceptionModel exceptionModel = JsonSerializer.Deserialize<ExceptionModel>(errorResponse, options);
                 if (exceptionModel == null)
                 {
                     throw new InternalServerErrorException($"API call error out with {response.StatusCode}");
                 }
-                throw new ApiErrorException(exceptionModel.Message, exceptionModel.Details);
+                throw new ApiErrorException(exceptionModel.Message ?? "API call error", exceptionModel.Details ?? string.Empty);
             }
 
             string responseString = await response.Content.ReadAsStringAsync();

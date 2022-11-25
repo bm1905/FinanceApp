@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ServiceDiscovery;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FinancePlanner.TaxServices.Services.Extensions
@@ -28,7 +29,22 @@ namespace FinancePlanner.TaxServices.Services.Extensions
         // Security
         private static void AddSecurity(this IServiceCollection services, IConfiguration config)
         {
+            //services.AddAuthentication(config.GetSection("Authentication:Scheme").Value)
+            //    .AddJwtBearer(config.GetSection("Authentication:Scheme").Value, options =>
+            //    {
+            //        options.Authority = config.GetSection("Authentication:IdentityServer:Url").Value;
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateAudience = false
+            //        };
+            //    });
 
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy(config.GetSection("Authentication:Policy:Name").Value,
+            //        policy => policy.RequireClaim(config.GetSection("Authentication:Policy:ClaimType").Value,
+            //            config.GetSection("Authentication:Policy:AllowedValues").Value));
+            //});
         }
         
         // Service Discovery
