@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FinancePlanner.API.Aggregator.Models;
 
-namespace FinancePlanner.API.Aggregator.Services
+namespace FinancePlanner.API.Aggregator.Services;
+
+public interface IPayCheckService
 {
-    public interface IPayCheckService
-    {
-        Task<PayCheckResponse> CalculatePayCheck(PayCheckRequest request);
-    }
+    Task<List<PayCheckResponse>> CalculatePayCheck(List<PayCheckRequest> request);
 }

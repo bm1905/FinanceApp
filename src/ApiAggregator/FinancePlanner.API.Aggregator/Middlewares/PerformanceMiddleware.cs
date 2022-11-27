@@ -4,36 +4,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace FinancePlanner.API.Aggregator.Middlewares
+namespace FinancePlanner.API.Aggregator.Middlewares;
+
+public class PerformanceMiddleware
 {
-    public class PerformanceMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<PerformanceMiddleware> _logger;
+
+    public PerformanceMiddleware(RequestDelegate next, ILogger<PerformanceMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<PerformanceMiddleware> _logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _next = next ?? throw new ArgumentNullException(nameof(next));
+    }
 
-        public PerformanceMiddleware(RequestDelegate next, ILogger<PerformanceMiddleware> logger)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _next = next ?? throw new ArgumentNullException(nameof(next));
-        }
+    public async Task InvokeAsync(HttpContext context)
+    {
+        const int performanceTimeLog = 500;
 
-        public async Task InvokeAsync(HttpContext context)
-        {
-            const int performanceTimeLog = 500;
+        var sw = new Stopwatch();
 
-            var sw = new Stopwatch();
+        sw.Start();
 
-            sw.Start();
+        await _next(context);
 
-            await _next(context);
+        sw.Stop();
 
-            sw.Stop();
-
-            if (performanceTimeLog < sw.ElapsedMilliseconds)
-                _logger.LogWarning("Request {Method} {Path} took about {Elapsed} ms",
-                    context.Request.Method,
-                    context.Request.Path.Value,
-                    sw.ElapsedMilliseconds);
-        }
+        if (performanceTimeLog < sw.ElapsedMilliseconds)
+            _logger.LogWarning("Request {Method} {Path} took about {Elapsed} ms",
+                context.Request.Method,
+                context.Request.Path.Value,
+                sw.ElapsedMilliseconds);
     }
 }

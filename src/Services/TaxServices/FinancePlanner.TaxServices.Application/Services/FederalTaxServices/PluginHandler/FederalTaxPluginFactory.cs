@@ -7,64 +7,63 @@ using FinancePlanner.Shared.Models.Exceptions;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 
-namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler
+namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler;
+
+public class FederalTaxPluginFactory : IFederalTaxPluginFactory
 {
-    public class FederalTaxPluginFactory : IFederalTaxPluginFactory
+    private readonly Dictionary<string, Assembly> _pluginMap;
+    private readonly Dictionary<string, string> _pluginConfig;
+    private readonly IConfiguration _configuration;
+    private readonly IFederalTaxRepository _federalTaxBracketRepository;
+
+    public FederalTaxPluginFactory(IConfiguration configuration, IFederalTaxRepository federalTaxBracketRepository)
     {
-        private readonly Dictionary<string, Assembly> _pluginMap;
-        private readonly Dictionary<string, string> _pluginConfig;
-        private readonly IConfiguration _configuration;
-        private readonly IFederalTaxRepository _federalTaxBracketRepository;
+        _pluginMap = new Dictionary<string, Assembly>();
+        _configuration = configuration;
+        _federalTaxBracketRepository = federalTaxBracketRepository;
+        _pluginConfig = _configuration.GetSection("W4PluginConfig")
+            .GetChildren()
+            .ToDictionary(x => x.Key, x => x.Value);
+    }
 
-        public FederalTaxPluginFactory(IConfiguration configuration, IFederalTaxRepository federalTaxBracketRepository)
+    public static Assembly LoadPlugin(string assemblyFileName)
+    {
+        string solutionRoot = Path.GetFullPath(Path.GetDirectoryName(typeof(FederalTaxPluginFactory).Assembly.Location)
+                                               ?? throw new ApplicationException("Something went wrong while getting assembly path!"));
+        string pluginLocation = Path.GetFullPath(Path.Combine(solutionRoot, $"plugins\\{Path.GetFileNameWithoutExtension(assemblyFileName)}",
+            assemblyFileName.Replace('\\', Path.DirectorySeparatorChar)));
+        FederalTaxPluginLoadContext loadContext = new FederalTaxPluginLoadContext(pluginLocation);
+        return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
+    }
+
+    public T GetService<T>(string w4Type)
+    {
+        try
         {
-            _pluginMap = new Dictionary<string, Assembly>();
-            _configuration = configuration;
-            _federalTaxBracketRepository = federalTaxBracketRepository;
-            _pluginConfig = _configuration.GetSection("W4PluginConfig")
-                .GetChildren()
-                .ToDictionary(x => x.Key, x => x.Value);
+            _pluginMap.TryGetValue(w4Type, out Assembly assembly);
+            Type pluginType = assembly?.GetTypes().FirstOrDefault(c => typeof(T).IsAssignableFrom(c));
+
+            if (pluginType == null)
+                throw new InternalServerErrorException($"No plugin implementing the interface {nameof(T)} and with name " +
+                                                       $"{w4Type} found in {assembly} at {assembly?.Location}");
+
+            var pluginService = (T)Activator.CreateInstance(pluginType, _configuration, _federalTaxBracketRepository);
+            return pluginService;
         }
-
-        public static Assembly LoadPlugin(string assemblyFileName)
+        catch (Exception ex)
         {
-            string solutionRoot = Path.GetFullPath(Path.GetDirectoryName(typeof(FederalTaxPluginFactory).Assembly.Location)
-                                                   ?? throw new ApplicationException("Something went wrong while getting assembly path!"));
-            string pluginLocation = Path.GetFullPath(Path.Combine(solutionRoot, $"plugins\\{Path.GetFileNameWithoutExtension(assemblyFileName)}",
-                assemblyFileName.Replace('\\', Path.DirectorySeparatorChar)));
-            FederalTaxPluginLoadContext loadContext = new FederalTaxPluginLoadContext(pluginLocation);
-            return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
+            Console.WriteLine(ex);
+            return default;
         }
+    }
 
-        public T GetService<T>(string w4Type)
+    public void Initialize()
+    {
+        foreach (var plugin in _pluginConfig)
         {
-            try
-            {
-                _pluginMap.TryGetValue(w4Type, out Assembly assembly);
-                Type pluginType = assembly?.GetTypes().FirstOrDefault(c => typeof(T).IsAssignableFrom(c));
-
-                if (pluginType == null)
-                    throw new InternalServerErrorException($"No plugin implementing the interface {nameof(T)} and with name " +
-                                                $"{w4Type} found in {assembly} at {assembly?.Location}");
-
-                var pluginService = (T)Activator.CreateInstance(pluginType, _configuration, _federalTaxBracketRepository);
-                return pluginService;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return default;
-            }
-        }
-
-        public void Initialize()
-        {
-            foreach (var plugin in _pluginConfig)
-            {
-                var (pluginKey, pluginFile) = plugin;
-                var assembly = LoadPlugin(pluginFile);
-                _pluginMap[pluginKey] = assembly;
-            }
+            var (pluginKey, pluginFile) = plugin;
+            var assembly = LoadPlugin(pluginFile);
+            _pluginMap[pluginKey] = assembly;
         }
     }
 }

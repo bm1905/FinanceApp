@@ -2,20 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace FinancePlanner.API.Aggregator.Controllers.v2
+namespace FinancePlanner.API.Aggregator.Controllers.v2;
+
+[ApiController]
+[ApiVersion("2.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ValidateModelFilter]
+public class PayController : ControllerBase
 {
-    [ApiController]
-    [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ValidateModelFilter]
-    public class PayController : ControllerBase
+    [MapToApiVersion("2.0")]
+    [HttpGet("Test")]
+    [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+    public IActionResult Index()
     {
-        [MapToApiVersion("2.0")]
-        [HttpGet("Test")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
-        public IActionResult Index()
-        {
-            return Ok(new { Status = "V2 Test Passed" });
-        }
+        return Ok(new { Status = "V2 Test Passed" });
     }
 }

@@ -1,25 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using FinancePlanner.Shared.Models.TaxServices;
+using FinancePlanner.Shared.Models.WageServices;
 
-namespace FinancePlanner.API.Aggregator.Models
+namespace FinancePlanner.API.Aggregator.Models;
+
+public class PayCheckResponse
 {
-    public class PayCheckResponse
-    {
-        public List<Response> Responses { get; set; }
-        public decimal TotalNetPay { get; set; }
-        public decimal TotalGrossPay { get; set; }
-
-        public PayCheckResponse()
-        {
-            Responses = new List<Response>();
-        }
-    }
-
-    public class Response
-    {
-        public decimal GrossPay { get; set; }
-        public decimal NetPay { get; set; }
-        public decimal PreTaxDeductions { get; set; }
-        public decimal TotalTax { get; set; }
-        public decimal PostTaxDeductions { get; set; }
-    }
+    public string EmployeeName { get; set; } = string.Empty;
+    public TotalTaxesWithheldResponse TaxesWithheldResponse { get; set; } = new();
+    public PreTaxDeductionResponse PreTaxDeductionResponse { get; set; } = new();
+    public PostTaxDeductionResponse PostTaxDeductionResponse { get; set; } = new();
 }

@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace FinancePlanner.TaxServices.Infrastructure.Persistence
+namespace FinancePlanner.TaxServices.Infrastructure.Persistence;
+
+public interface IDapperContext
 {
-    public interface IDapperContext
-    {
-        IDbConnection CreateConnection();
-    }
+    IDbConnection CreateConnection();
 }

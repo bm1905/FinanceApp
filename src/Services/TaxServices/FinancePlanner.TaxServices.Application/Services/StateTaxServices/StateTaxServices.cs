@@ -3,26 +3,25 @@ using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using System.Threading.Tasks;
 using FinancePlanner.Shared.Models.TaxServices;
 
-namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices;
+
+public class StateTaxServices : IStateTaxServices
 {
-    public class StateTaxServices : IStateTaxServices
+    private readonly IStateTaxRepository _stateTaxRepository;
+
+    public StateTaxServices(IStateTaxRepository stateTaxRepository)
     {
-        private readonly IStateTaxRepository _stateTaxRepository;
+        _stateTaxRepository = stateTaxRepository;
+    }
 
-        public StateTaxServices(IStateTaxRepository stateTaxRepository)
+    public async Task<GetStateTaxWithheldQueryResponse> CalculateStateTaxWithheldAmount(CalculateTaxWithheldRequest request)
+    {
+        GetStateTaxWithheldQueryResponse response = new()
         {
-            _stateTaxRepository = stateTaxRepository;
-        }
+            StateTaxableWage = request.TaxableWageInformation.StateAndFederalTaxableWages,
+            StateWithheldAmount = 0
+        };
 
-        public async Task<GetStateTaxWithheldQueryResponse> CalculateStateTaxWithheldAmount(CalculateTaxWithheldRequest request)
-        {
-            GetStateTaxWithheldQueryResponse response = new()
-            {
-                StateTaxableWage = request.StateTaxableWage,
-                StateWithheldAmount = 0
-            };
-
-            return await Task.FromResult(response);
-        }
+        return await Task.FromResult(response);
     }
 }

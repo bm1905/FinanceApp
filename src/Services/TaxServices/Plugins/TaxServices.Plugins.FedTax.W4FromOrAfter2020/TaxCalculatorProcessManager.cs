@@ -6,32 +6,31 @@ using FinancePlanner.TaxServices.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using TaxServices.Plugins.FedTax.W4FromOrAfter2020.Models;
 
-namespace TaxServices.Plugins.FedTax.W4FromOrAfter2020
+namespace TaxServices.Plugins.FedTax.W4FromOrAfter2020;
+
+public class TaxCalculatorProcessManager : IFederalTaxServices
 {
-    public class TaxCalculatorProcessManager : IFederalTaxServices
+    private readonly IConfiguration _configuration;
+    private readonly TaxCalculatorManager _taxCalculatorManager;
+
+    public TaxCalculatorProcessManager(IConfiguration configuration, IFederalTaxRepository federalTaxBracketRepository)
     {
-        private readonly IConfiguration _configuration;
-        private readonly TaxCalculatorManager _taxCalculatorManager;
+        _configuration = configuration;
+        _taxCalculatorManager = new TaxCalculatorManager(federalTaxBracketRepository);
+    }
 
-        public TaxCalculatorProcessManager(IConfiguration configuration, IFederalTaxRepository federalTaxBracketRepository)
+    public async Task<GetFederalTaxWithheldQueryResponse> CalculateFederalTaxWithheldAmount(CalculateTaxWithheldRequest model)
+    {
+        W4FromOrAfter2020Model w4FromOrAfter2020Model = _taxCalculatorManager.GetModel(model);
+        decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4FromOrAfter2020Model, _configuration);
+        decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4FromOrAfter2020Model, adjustedAnnualWage);
+
+        GetFederalTaxWithheldQueryResponse response = new GetFederalTaxWithheldQueryResponse
         {
-            _configuration = configuration;
-            _taxCalculatorManager = new TaxCalculatorManager(federalTaxBracketRepository);
-        }
+            FederalTaxableWage = model.TaxableWageInformation.StateAndFederalTaxableWages,
+            FederalTaxWithheldAmount = federalTaxWithheldAmount
+        };
 
-        public async Task<GetFederalTaxWithheldQueryResponse> CalculateFederalTaxWithheldAmount(CalculateTaxWithheldRequest model)
-        {
-            W4FromOrAfter2020Model w4FromOrAfter2020Model = _taxCalculatorManager.GetModel(model);
-            decimal adjustedAnnualWage = _taxCalculatorManager.GetAdjustedAnnualWage(w4FromOrAfter2020Model, _configuration);
-            decimal federalTaxWithheldAmount = await _taxCalculatorManager.GetFederalTaxWithheldAmount(w4FromOrAfter2020Model, adjustedAnnualWage);
-
-            GetFederalTaxWithheldQueryResponse response = new GetFederalTaxWithheldQueryResponse
-            {
-                FederalTaxableWage = model.FederalTaxableWage,
-                FederalTaxWithheldAmount = federalTaxWithheldAmount
-            };
-
-            return response;
-        }
+        return response;
     }
 }

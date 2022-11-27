@@ -2,10 +2,9 @@
 using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.StateTax.Queries.GetStateTaxWithheld;
 
-namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.StateTaxServices;
+
+public interface IStateTaxServices
 {
-    public interface IStateTaxServices
-    {
-        Task<GetStateTaxWithheldQueryResponse> CalculateStateTaxWithheldAmount(CalculateTaxWithheldRequest request);
-    }
+    Task<GetStateTaxWithheldQueryResponse> CalculateStateTaxWithheldAmount(CalculateTaxWithheldRequest request);
 }

@@ -11,30 +11,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 
-namespace FinancePlanner.TaxServices.Application.Extensions
+namespace FinancePlanner.TaxServices.Application.Extensions;
+
+public static class ApplicationServiceExtension
 {
-    public static class ApplicationServiceExtension
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddMediatR(typeof(FederalTaxPluginFactory).Assembly);
+        services.AddScoped(serviceProvider =>
         {
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddMediatR(typeof(FederalTaxPluginFactory).Assembly);
-            services.AddScoped(serviceProvider =>
-            {
-                IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                IFederalTaxRepository federalTaxRepository = serviceProvider.GetRequiredService<IFederalTaxRepository>();
-                FederalTaxPluginFactory pluginFactory = new FederalTaxPluginFactory(configuration, federalTaxRepository);
-                pluginFactory.Initialize();
-                return pluginFactory;
-            });
-            services.AddScoped<IStateTaxServices, StateTaxServices>();
-            services.AddScoped<IMedicareTaxServices, MedicareTaxServices>();
-            services.AddScoped<ISocialSecurityTaxServices, SocialSecurityTaxServices>();
-            services.AddScoped<IStateTaxServices, StateTaxServices>();
-            services.AddScoped<ITotalTaxesServices, TotalTaxesServices>();
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-            return services;
-        }
+            IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            IFederalTaxRepository federalTaxRepository = serviceProvider.GetRequiredService<IFederalTaxRepository>();
+            FederalTaxPluginFactory pluginFactory = new FederalTaxPluginFactory(configuration, federalTaxRepository);
+            pluginFactory.Initialize();
+            return pluginFactory;
+        });
+        services.AddScoped<IStateTaxServices, StateTaxServices>();
+        services.AddScoped<IMedicareTaxServices, MedicareTaxServices>();
+        services.AddScoped<ISocialSecurityTaxServices, SocialSecurityTaxServices>();
+        services.AddScoped<IStateTaxServices, StateTaxServices>();
+        services.AddScoped<ITotalTaxesServices, TotalTaxesServices>();
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        return services;
     }
 }

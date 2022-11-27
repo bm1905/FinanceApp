@@ -2,10 +2,9 @@
 using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.MedicareTax.Queries.GetMedicareTaxWithheld;
 
-namespace FinancePlanner.TaxServices.Application.Services.MedicareTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.MedicareTaxServices;
+
+public interface IMedicareTaxServices
 {
-    public interface IMedicareTaxServices
-    {
-        Task<GetMedicareTaxWithheldQueryResponse> CalculateMedicareTaxWithheldAmount(CalculateTaxWithheldRequest request);
-    }
+    Task<GetMedicareTaxWithheldQueryResponse> CalculateMedicareTaxWithheldAmount(CalculateTaxWithheldRequest request);
 }

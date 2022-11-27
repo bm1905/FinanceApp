@@ -1,9 +1,8 @@
 ﻿using FinancePlanner.Shared.Models.WageServices;
 
-namespace FinancePlanner.WageServices.Services.Services
+namespace FinancePlanner.WageServices.Services.Services;
+
+public interface IPreTaxService
 {
-    public interface IPreTaxService
-    {
-        PreTaxWagesResponse CalculateTaxableWages(PreTaxWagesRequest request);
-    }
+    PreTaxDeductionResponse CalculateTaxableWages(PreTaxDeductionRequest request);
 }
