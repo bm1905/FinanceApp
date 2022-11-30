@@ -26,29 +26,6 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IncomeInformation",
-                columns: table => new
-                {
-                    IncomeInformationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PayInformationId = table.Column<int>(type: "int", nullable: false),
-                    GrossPay = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    NetPay = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalHours = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PayRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPreTaxDeductions = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPostTaxDeductions = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StateAndFederalTaxableWages = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    SocialAndMedicareTaxableWages = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IncomeInformation", x => x.IncomeInformationId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PostTaxDeductions",
                 columns: table => new
                 {
@@ -84,6 +61,20 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaxableWageInformation",
+                columns: table => new
+                {
+                    TaxableWageInformationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StateAndFederalTaxableWages = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SocialAndMedicareTaxableWages = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaxableWageInformation", x => x.TaxableWageInformationId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaxInformation",
                 columns: table => new
                 {
@@ -97,11 +88,29 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                     ExtraWithholdingAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DeductionsAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OtherIncomeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ClaimDependentsAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    ClaimDependentsAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AllowanceNumber = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TaxInformation", x => x.TaxInformationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TaxWithheldInformation",
+                columns: table => new
+                {
+                    TaxWithheldInformationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FederalTaxWithheldAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MedicareWithheldAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SocialSecurityWithheldAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StateTaxWithheldAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalTaxesWithheldAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaxWithheldInformation", x => x.TaxWithheldInformationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,6 +155,51 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "IncomeInformation",
+                columns: table => new
+                {
+                    IncomeInformationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PayInformationId = table.Column<int>(type: "int", nullable: false),
+                    GrossPay = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NetPay = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalHours = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PayRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPreTaxDeductions = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPostTaxDeductions = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TaxableWageInformationId = table.Column<int>(type: "int", nullable: false),
+                    TaxWithheldInformationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomeInformation", x => x.IncomeInformationId);
+                    table.ForeignKey(
+                        name: "FK_IncomeInformation_TaxableWageInformation_TaxableWageInformationId",
+                        column: x => x.TaxableWageInformationId,
+                        principalTable: "TaxableWageInformation",
+                        principalColumn: "TaxableWageInformationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IncomeInformation_TaxWithheldInformation_TaxWithheldInformationId",
+                        column: x => x.TaxWithheldInformationId,
+                        principalTable: "TaxWithheldInformation",
+                        principalColumn: "TaxWithheldInformationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IncomeInformation_TaxableWageInformationId",
+                table: "IncomeInformation",
+                column: "TaxableWageInformationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IncomeInformation_TaxWithheldInformationId",
+                table: "IncomeInformation",
+                column: "TaxWithheldInformationId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_PayInformation_BiWeeklyHoursAndRateId",
                 table: "PayInformation",
@@ -174,6 +228,12 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PayInformation");
+
+            migrationBuilder.DropTable(
+                name: "TaxableWageInformation");
+
+            migrationBuilder.DropTable(
+                name: "TaxWithheldInformation");
 
             migrationBuilder.DropTable(
                 name: "BiWeeklyHoursAndRates");

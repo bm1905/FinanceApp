@@ -24,28 +24,24 @@ public class PayInformationService : IPayInformationService
         SavePayInformationCommandResponse response = new();
         if (userId != null && payId != null)
         {
-            PayInformation? payInformationToUpdate = await _payInformationRepository.GetOne(userId, (int)payId);
-            if (payInformationToUpdate == null)
+            PayInformation? oldData = await _payInformationRepository.GetOne(userId, (int)payId);
+            if (oldData == null)
             {
                 throw new NotFoundException($"Record not found for user id: {userId} and pay id: {payId}");
             }
-            PayInformation newPayInformation = _mapper.Map<PayInformation>(request);
-            newPayInformation.BiWeeklyHoursAndRate.BiWeeklyHoursAndRateId = payInformationToUpdate.BiWeeklyHoursAndRateId;
-            newPayInformation.PostTaxDeduction.PostTaxDeductionId = payInformationToUpdate.PostTaxDeductionId;
-            newPayInformation.PreTaxDeduction.PreTaxDeductionId = payInformationToUpdate.PreTaxDeductionId;
-            newPayInformation.TaxInformation.TaxInformationId = payInformationToUpdate.TaxInformationId;
-
-            payInformationToUpdate.EmployeeName = newPayInformation.EmployeeName;
-            payInformationToUpdate.BiWeeklyHoursAndRate = newPayInformation.BiWeeklyHoursAndRate;
-            payInformationToUpdate.PostTaxDeduction = newPayInformation.PostTaxDeduction;
-            payInformationToUpdate.PreTaxDeduction = newPayInformation.PreTaxDeduction;
-            payInformationToUpdate.TaxInformation = newPayInformation.TaxInformation;
-            bool updateResponse = await _payInformationRepository.Update(payInformationToUpdate);
+            PayInformation newData = _mapper.Map<PayInformation>(request);
+            newData.UserId = oldData.UserId;
+            newData.PayInformationId = oldData.PayInformationId;
+            newData.BiWeeklyHoursAndRate.BiWeeklyHoursAndRateId = oldData.BiWeeklyHoursAndRate.BiWeeklyHoursAndRateId;
+            newData.TaxInformation.TaxInformationId = oldData.TaxInformation.TaxInformationId;
+            newData.PreTaxDeduction.PreTaxDeductionId = oldData.PreTaxDeduction.PreTaxDeductionId;
+            newData.PostTaxDeduction.PostTaxDeductionId = oldData.PostTaxDeduction.PostTaxDeductionId;
+            bool updateResponse = await _payInformationRepository.Update(newData);
             if (!updateResponse)
             {
                 throw new NotUpdatedException($"Record not updated for user id: {userId} and pay id: {payId}");
             }
-            response.PayInformationResponse = _mapper.Map<PayInformationResponse>(payInformationToUpdate);
+            response.PayInformationResponse = _mapper.Map<PayInformationResponse>(newData);
             return response;
         }
         PayInformation payInformation = _mapper.Map<PayInformation>(request);

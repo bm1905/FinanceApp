@@ -3,6 +3,7 @@ using FinancePlanner.FinanceServices.Application.Features.IncomeInformation.Comm
 using FinancePlanner.FinanceServices.Application.Features.IncomeInformation.Queries;
 using FinancePlanner.FinanceServices.Domain.Entities;
 using FinancePlanner.FinanceServices.Infrastructure.Repositories;
+using FinancePlanner.Shared.Models.Common;
 using FinancePlanner.Shared.Models.Exceptions;
 using FinancePlanner.Shared.Models.FinanceServices;
 
@@ -24,19 +25,21 @@ public class IncomeInformationService : IIncomeInformationService
         SaveIncomeInformationCommandResponse response = new();
         if (userId != null && incomeId != null)
         {
-            IncomeInformation? incomeInformationToUpdate = await _incomeInformationRepository.GetOne(userId, (int)incomeId);
-            if (incomeInformationToUpdate == null)
+            IncomeInformation? oldData = await _incomeInformationRepository.GetOne(userId, (int)incomeId);
+            if (oldData == null)
             {
                 throw new NotFoundException($"Record not found for user id: {userId} and income information id: {incomeId}");
             }
             IncomeInformation newData = _mapper.Map<IncomeInformation>(request);
-            newData.IncomeInformationId = incomeInformationToUpdate.IncomeInformationId;
+            newData.IncomeInformationId = oldData.IncomeInformationId;
+            newData.TaxableWageInformation.TaxableWageInformationId = oldData.TaxableWageInformation.TaxableWageInformationId;
+            newData.TaxWithheldInformation.TaxWithheldInformationId = oldData.TaxWithheldInformation.TaxWithheldInformationId;
             bool updateResponse = await _incomeInformationRepository.Update(newData);
             if (!updateResponse)
             {
                 throw new NotUpdatedException($"Record not updated for user id: {userId} and income information id: {incomeId}");
             }
-            response.IncomeInformationResponse = _mapper.Map<IncomeInformationResponse>(incomeInformationToUpdate);
+            response.IncomeInformationResponse = _mapper.Map<IncomeInformationResponse>(newData);
             return response;
         }
         IncomeInformation incomeInformation = _mapper.Map<IncomeInformation>(request);

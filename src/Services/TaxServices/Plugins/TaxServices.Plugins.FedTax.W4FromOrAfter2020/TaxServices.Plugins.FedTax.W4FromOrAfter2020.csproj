@@ -9,7 +9,7 @@
     <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.19">
+    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.22">
       <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>none</PrivateAssets>
       <Private>false</Private>

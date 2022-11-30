@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FinancePlanner.Shared.Models.Enums;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 
 namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;

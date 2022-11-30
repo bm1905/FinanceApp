@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    [Migration("20221126230720_InitialCreate")]
+    [Migration("20221129231517_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,11 +75,11 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                     b.Property<decimal>("PayRate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("SocialAndMedicareTaxableWages")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("TaxWithheldInformationId")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("StateAndFederalTaxableWages")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("TaxableWageInformationId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalHours")
                         .HasColumnType("decimal(18,2)");
@@ -95,6 +95,10 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IncomeInformationId");
+
+                    b.HasIndex("TaxWithheldInformationId");
+
+                    b.HasIndex("TaxableWageInformationId");
 
                     b.ToTable("IncomeInformation");
                 });
@@ -199,6 +203,25 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                     b.ToTable("PreTaxDeductions");
                 });
 
+            modelBuilder.Entity("FinancePlanner.FinanceServices.Domain.Entities.TaxableWageInformation", b =>
+                {
+                    b.Property<int>("TaxableWageInformationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaxableWageInformationId"), 1L, 1);
+
+                    b.Property<decimal>("SocialAndMedicareTaxableWages")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("StateAndFederalTaxableWages")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("TaxableWageInformationId");
+
+                    b.ToTable("TaxableWageInformation");
+                });
+
             modelBuilder.Entity("FinancePlanner.FinanceServices.Domain.Entities.TaxInformation", b =>
                 {
                     b.Property<int>("TaxInformationId")
@@ -206,6 +229,9 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaxInformationId"), 1L, 1);
+
+                    b.Property<int>("AllowanceNumber")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("ClaimDependentsAmount")
                         .HasColumnType("decimal(18,2)");
@@ -238,6 +264,53 @@ namespace FinancePlanner.FinanceServices.Infrastructure.Migrations
                     b.HasKey("TaxInformationId");
 
                     b.ToTable("TaxInformation");
+                });
+
+            modelBuilder.Entity("FinancePlanner.FinanceServices.Domain.Entities.TaxWithheldInformation", b =>
+                {
+                    b.Property<int>("TaxWithheldInformationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaxWithheldInformationId"), 1L, 1);
+
+                    b.Property<decimal>("FederalTaxWithheldAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MedicareWithheldAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SocialSecurityWithheldAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("StateTaxWithheldAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalTaxesWithheldAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("TaxWithheldInformationId");
+
+                    b.ToTable("TaxWithheldInformation");
+                });
+
+            modelBuilder.Entity("FinancePlanner.FinanceServices.Domain.Entities.IncomeInformation", b =>
+                {
+                    b.HasOne("FinancePlanner.FinanceServices.Domain.Entities.TaxWithheldInformation", "TaxWithheldInformation")
+                        .WithMany()
+                        .HasForeignKey("TaxWithheldInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FinancePlanner.FinanceServices.Domain.Entities.TaxableWageInformation", "TaxableWageInformation")
+                        .WithMany()
+                        .HasForeignKey("TaxableWageInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaxWithheldInformation");
+
+                    b.Navigation("TaxableWageInformation");
                 });
 
             modelBuilder.Entity("FinancePlanner.FinanceServices.Domain.Entities.PayInformation", b =>

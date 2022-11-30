@@ -13,6 +13,8 @@ public class MappingProfile : Profile
         CreateMap<PreTaxDeductionDto, PreTaxDeduction>().ReverseMap();
         CreateMap<PostTaxDeductionDto, PostTaxDeduction>().ReverseMap();
         CreateMap<TaxInformationDto, TaxInformation>().ReverseMap();
+        CreateMap<TaxableWageInformationDto, TaxableWageInformation>().ReverseMap();
+        CreateMap<TaxWithheldInformationDto, TaxWithheldInformation>().ReverseMap();
         CreateMap<PayInformationRequest, PayInformation>();
         CreateMap<PayInformation, PayInformationResponse>();
         CreateMap<IncomeInformationRequest, IncomeInformation>();

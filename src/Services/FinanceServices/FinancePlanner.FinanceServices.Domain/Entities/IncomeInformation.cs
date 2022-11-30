@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinancePlanner.FinanceServices.Domain.Entities;
 
@@ -15,11 +16,8 @@ public class IncomeInformation
     public decimal PayRate { get; set; }
     public decimal TotalPreTaxDeductions { get; set; }
     public decimal TotalPostTaxDeductions { get; set; }
-    public decimal StateAndFederalTaxableWages { get; set; }
-    public decimal SocialAndMedicareTaxableWages { get; set; }
-    public decimal FederalTaxWithheldAmount { get; set; }
-    public decimal MedicareWithheldAmount { get; set; }
-    public decimal SocialSecurityWithheldAmount { get; set; }
-    public decimal StateTaxWithheldAmount { get; set; }
-    public decimal TotalTaxesWithheldAmount { get; set; }
+    [ForeignKey("TaxableWageInformationId")]
+    public virtual TaxableWageInformation TaxableWageInformation { get; set; } = new();
+    [ForeignKey("TaxWithheldInformationId")]
+    public virtual TaxWithheldInformation TaxWithheldInformation { get; set; } = new();
 }

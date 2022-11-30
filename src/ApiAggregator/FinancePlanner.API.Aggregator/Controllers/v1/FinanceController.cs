@@ -56,25 +56,25 @@ public class FinanceController : ControllerBase
 
     [MapToApiVersion("1.0")]
     [HttpPost("SavePayInformation")]
-    [ProducesResponseType(typeof(ActionResult<PayInformationResponse>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ActionResult<IncomeInformationResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PayInformationResponse>> SavePayInformation([FromBody] PayInformationRequest request)
+    public async Task<ActionResult<IncomeInformationResponse>> SavePayInformation([FromBody] PayInformationRequest request)
     {
-        PayInformationResponse response = await _financeService.SavePay(request, null, null);
+        IncomeInformationResponse response = await _financeService.SavePay(request, null, null, null);
         return Ok(response);
     }
 
     [MapToApiVersion("1.0")]
-    [HttpPost("UpdatePayInformation/{userId}/{payId:int}")]
-    [ProducesResponseType(typeof(ActionResult<bool>), (int)HttpStatusCode.OK)]
+    [HttpPost("UpdatePayInformation/{userId}/{payId:int}/{incomeId:int}")]
+    [ProducesResponseType(typeof(ActionResult<IncomeInformationResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<PayInformationResponse>> UpdatePayInformation([FromBody] PayInformationRequest request, string userId, int payId)
+    public async Task<ActionResult<IncomeInformationResponse>> UpdatePayInformation([FromBody] PayInformationRequest request, string userId, int payId, int incomeId)
     {
-        PayInformationResponse response = await _financeService.SavePay(request, userId, payId);
+        IncomeInformationResponse response = await _financeService.SavePay(request, userId, payId, incomeId);
         return Ok(response);
     }
 

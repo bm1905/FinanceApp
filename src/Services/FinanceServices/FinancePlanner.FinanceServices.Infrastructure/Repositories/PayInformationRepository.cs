@@ -32,66 +32,30 @@ public class PayInformationRepository : IPayInformationRepository
 
     public async Task<List<PayInformation>?> GetAll(string userId)
     {
-        if (_dbContext.BiWeeklyHoursAndRates == null 
-            || _dbContext.PostTaxDeductions == null 
-            || _dbContext.PreTaxDeductions == null 
-            || _dbContext.TaxInformation == null) return default;
-
-        List<PayInformation> payInformationList = await (from p in _dbContext.PayInformation
-            join b in _dbContext.BiWeeklyHoursAndRates on p.BiWeeklyHoursAndRateId equals b.BiWeeklyHoursAndRateId
-            join po in _dbContext.PostTaxDeductions on p.PostTaxDeductionId equals po.PostTaxDeductionId
-            join pr in _dbContext.PreTaxDeductions on p.PreTaxDeductionId equals pr.PreTaxDeductionId
-            join t in _dbContext.TaxInformation on p.TaxInformationId equals t.TaxInformationId
-            where p.UserId == userId
-            select new PayInformation
-            {
-                PayInformationId = p.PayInformationId,
-                UserId = p.UserId,
-                EmployeeName = p.EmployeeName,
-                BiWeeklyHoursAndRateId = p.BiWeeklyHoursAndRateId,
-                BiWeeklyHoursAndRate = b,
-                PreTaxDeductionId = p.PreTaxDeductionId,
-                PreTaxDeduction = pr,
-                PostTaxDeductionId = p.PostTaxDeductionId,
-                PostTaxDeduction = po,
-                TaxInformationId = p.TaxInformationId,
-                TaxInformation = t
-            }
-        ).AsNoTracking().ToListAsync();
+        if (_dbContext.PayInformation == null) return default;
+        List<PayInformation> payInformationList = await _dbContext.PayInformation
+            .Where(x => x.UserId == userId)
+            .Include(x => x.TaxInformation)
+            .Include(x => x.PreTaxDeduction)
+            .Include(x => x.PostTaxDeduction)
+            .Include(x => x.BiWeeklyHoursAndRate)
+            .AsNoTracking()
+            .ToListAsync();
 
         return payInformationList;
     }
 
     public async Task<PayInformation?> GetOne(string userId, int payId)
     {
-        if (_dbContext.BiWeeklyHoursAndRates == null
-            || _dbContext.PostTaxDeductions == null
-            || _dbContext.PreTaxDeductions == null
-            || _dbContext.TaxInformation == null) return default;
-
-        PayInformation? payInformation = await (from p in _dbContext.PayInformation
-                join b in _dbContext.BiWeeklyHoursAndRates on p.BiWeeklyHoursAndRateId equals b.BiWeeklyHoursAndRateId
-                join po in _dbContext.PostTaxDeductions on p.PostTaxDeductionId equals po.PostTaxDeductionId
-                join pr in _dbContext.PreTaxDeductions on p.PreTaxDeductionId equals pr.PreTaxDeductionId
-                join t in _dbContext.TaxInformation on p.TaxInformationId equals t.TaxInformationId
-                where p.UserId == userId
-                where p.PayInformationId == payId
-                select new PayInformation
-                {
-                    PayInformationId = p.PayInformationId,
-                    UserId = p.UserId,
-                    EmployeeName = p.EmployeeName,
-                    BiWeeklyHoursAndRateId = p.BiWeeklyHoursAndRateId,
-                    BiWeeklyHoursAndRate = b,
-                    PreTaxDeductionId = p.PreTaxDeductionId,
-                    PreTaxDeduction = pr,
-                    PostTaxDeductionId = p.PostTaxDeductionId,
-                    PostTaxDeduction = po,
-                    TaxInformationId = p.TaxInformationId,
-                    TaxInformation = t
-                }
-            ).AsNoTracking().SingleOrDefaultAsync();
-
+        if (_dbContext.PayInformation == null) return default;
+        PayInformation? payInformation = await _dbContext.PayInformation
+            .Where(x => x.UserId == userId && x.PayInformationId == payId)
+            .Include(x => x.TaxInformation)
+            .Include(x => x.PreTaxDeduction)
+            .Include(x => x.PostTaxDeduction)
+            .Include(x => x.BiWeeklyHoursAndRate)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
         return payInformation;
     }
 

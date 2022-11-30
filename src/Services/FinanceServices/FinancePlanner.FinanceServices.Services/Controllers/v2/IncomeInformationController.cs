@@ -3,28 +3,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace FinancePlanner.FinanceServices.Services.Controllers.v2
+namespace FinancePlanner.FinanceServices.Services.Controllers.v2;
+
+[ApiController]
+//[Authorize]
+[ApiVersion("2.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+public class IncomeInformationController : ControllerBase
 {
-    [ApiController]
-    //[Authorize]
-    [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class IncomeInformationController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public IncomeInformationController(IMediator mediator)
     {
-        private readonly IMediator _mediator;
+        _mediator = mediator;
+    }
 
-        public IncomeInformationController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        [AllowAnonymous]
-        [MapToApiVersion("2.0")]
-        [HttpGet("Test")]
-        [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
-        public IActionResult Index()
-        {
-            return Ok(new { Status = "V2 Test Passed" });
-        }
+    [AllowAnonymous]
+    [MapToApiVersion("2.0")]
+    [HttpGet("Test")]
+    [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]
+    public IActionResult Index()
+    {
+        return Ok(new { Status = "V2 Test Passed" });
     }
 }

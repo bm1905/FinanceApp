@@ -15,4 +15,6 @@ public class FinanceDbContext : DbContext
     public DbSet<PreTaxDeduction>? PreTaxDeductions { get; set; }
     public DbSet<TaxInformation>? TaxInformation { get; set; }
     public DbSet<IncomeInformation>? IncomeInformation { get; set; }
+    public DbSet<TaxWithheldInformation>? TaxWithheldInformation { get; set; }
+    public DbSet<TaxableWageInformation>? TaxableWageInformation { get; set; }
 }
