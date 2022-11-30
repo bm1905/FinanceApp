@@ -11,15 +11,11 @@ public class FederalTaxPluginLoadContext : AssemblyLoadContext
         _resolver = new AssemblyDependencyResolver(pluginPath);
     }
 
-    protected override Assembly Load(AssemblyName assemblyName)
+    protected override Assembly? Load(AssemblyName assemblyName)
     {
-        string assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        if (assemblyPath != null)
-        {
-            var assembly = LoadFromAssemblyPath(assemblyPath);
-            return assembly;
-        }
-
-        return null;
+        string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        if (assemblyPath == null) return null;
+        var assembly = LoadFromAssemblyPath(assemblyPath);
+        return assembly;
     }
 }

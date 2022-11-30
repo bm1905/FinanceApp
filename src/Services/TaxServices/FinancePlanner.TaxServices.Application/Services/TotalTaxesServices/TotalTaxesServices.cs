@@ -43,7 +43,7 @@ public class TotalTaxesServices : ITotalTaxesServices
             throw new BadRequestException("Unable to get W4Type name");
         }
 
-        IFederalTaxServices service = _pluginFactory.GetService<IFederalTaxServices>(w4TypeName);
+        IFederalTaxServices? service = _pluginFactory.GetService<IFederalTaxServices>(w4TypeName);
         if (service == null)
         {
             throw new ApplicationException("Something went wrong while loading plugin!");

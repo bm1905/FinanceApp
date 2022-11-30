@@ -69,8 +69,9 @@ public class FinanceService : IFinanceService
         if (incomeInformationResponse == null)
         {
             throw new InternalServerErrorException("Something went wrong during income calculation.");
-        } 
-        
+        }
+        // TODO - If failed, add to message queue and save later.
+
         return incomeInformationResponse;
     }
 
@@ -80,9 +81,9 @@ public class FinanceService : IFinanceService
         string financeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:DeletePayInformation").Value}/{userId}/{payId}";
         bool isDeleted = await financeServiceClient.Delete(financeServiceUrl);
         if (!isDeleted) return isDeleted;
-        
         string incomeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:DeleteIncomeInformation").Value}/{userId}/{incomeId}";
         bool response = await financeServiceClient.Delete(incomeServiceUrl);
+        // TODO - If failed, add to message queue and delete later.
         return response;
     }
 
