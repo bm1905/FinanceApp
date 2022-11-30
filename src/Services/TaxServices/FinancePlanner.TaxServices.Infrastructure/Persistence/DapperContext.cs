@@ -6,7 +6,7 @@ namespace FinancePlanner.TaxServices.Infrastructure.Persistence;
 
 public class DapperContext : IDapperContext
 {
-    private readonly string _connectionString;
+    private readonly string? _connectionString;
 
     public DapperContext(IConfiguration configuration)
     {

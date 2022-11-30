@@ -51,23 +51,44 @@ public class FinanceService : IFinanceService
 
     public async Task<IncomeInformationResponse> SavePay(PayInformationRequest request, string? userId, int? payId, int? incomeId)
     {
-        string financeServiceUrl;
+        string financeServiceUrl = (userId != null && payId != null)
+            ? $"{_config.GetSection("Clients:FinanceServiceClient:UpdatePayInformation").Value}/{userId}/{payId}"
+            : $"{_config.GetSection("Clients:FinanceServiceClient:SavePayInformation").Value}";
         HttpClient financeServiceClient = _httpClientFactory.CreateClient(_config.GetSection("Clients:FinanceServiceClient:ClientName").Value);
-        if (userId != null && payId != null)
-        {
-            financeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:UpdatePayInformation").Value}/{userId}/{payId}";
-        }
-        else
-        {
-            financeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:SavePayInformation").Value}";
-        }
-
         PayInformationResponse? payInformationResponse = await financeServiceClient.Post<PayInformationRequest, PayInformationResponse>(request, financeServiceUrl);
         if (payInformationResponse == null)
         {
             throw new InternalServerErrorException($"Something went wrong when calling {financeServiceUrl}, received null response");
         }
 
+        IncomeInformationRequest incomeInformationRequest = await GetIncomeInformationRequest(payInformationResponse);
+        string incomeServiceUrl = (userId != null && incomeId != null) 
+            ? $"{_config.GetSection("Clients:FinanceServiceClient:UpdateIncomeInformation").Value}/{userId}/{incomeId}"
+            : $"{_config.GetSection("Clients:FinanceServiceClient:SaveIncomeInformation").Value}";
+        IncomeInformationResponse? incomeInformationResponse = await financeServiceClient.Post<IncomeInformationRequest, IncomeInformationResponse>(incomeInformationRequest, incomeServiceUrl);
+        if (incomeInformationResponse == null)
+        {
+            throw new InternalServerErrorException("Something went wrong during income calculation.");
+        }
+        // TODO - If failed, add to message queue and save later.
+
+        return incomeInformationResponse;
+    }
+
+    public async Task<bool> DeletePay(string userId, int payId, int incomeId)
+    {
+        HttpClient financeServiceClient = _httpClientFactory.CreateClient(_config.GetSection("Clients:FinanceServiceClient:ClientName").Value);
+        string financeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:DeletePayInformation").Value}/{userId}/{payId}";
+        bool isDeleted = await financeServiceClient.Delete(financeServiceUrl);
+        if (!isDeleted) return isDeleted;
+        string incomeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:DeleteIncomeInformation").Value}/{userId}/{incomeId}";
+        bool response = await financeServiceClient.Delete(incomeServiceUrl);
+        // TODO - If failed, add to message queue and delete later.
+        return response;
+    }
+
+    private async Task<IncomeInformationRequest> GetIncomeInformationRequest(PayInformationResponse payInformationResponse)
+    {
         List<WeeklyHoursAndRateDto> weeklyHoursAndRate = new()
         {
             new WeeklyHoursAndRateDto()
@@ -119,9 +140,9 @@ public class FinanceService : IFinanceService
             UserId = payInformationResponse.UserId,
             GrossPay = payCheckResponse.PreTaxDeductionResponse.GrossPay,
             NetPay = payCheckResponse.PreTaxDeductionResponse.GrossPay
-                     - payCheckResponse.PreTaxDeductionResponse.TotalPreTaxDeductionAmount
-                     - payCheckResponse.PostTaxDeductionResponse.TotalPostTaxDeductionAmount
-                     - payCheckResponse.TaxesWithheldResponse.TaxWithheldInformation.TotalTaxesWithheldAmount,
+             - payCheckResponse.PreTaxDeductionResponse.TotalPreTaxDeductionAmount
+             - payCheckResponse.PostTaxDeductionResponse.TotalPostTaxDeductionAmount
+             - payCheckResponse.TaxesWithheldResponse.TaxWithheldInformation.TotalTaxesWithheldAmount,
             PayRate = weeklyHoursAndRate.First().HourlyRate,
             TaxableWageInformation = payCheckResponse.TaxesWithheldResponse.TaxableWageInformation,
             TaxWithheldInformation = payCheckResponse.TaxesWithheldResponse.TaxWithheldInformation,
@@ -130,29 +151,6 @@ public class FinanceService : IFinanceService
             TotalPreTaxDeductions = payCheckResponse.PreTaxDeductionResponse.TotalPreTaxDeductionAmount
         };
 
-        string incomeServiceUrl;
-        if (userId != null && incomeId != null)
-        {
-            incomeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:UpdateIncomeInformation").Value}/{userId}/{incomeId}";
-        }
-        else
-        {
-            incomeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:SaveIncomeInformation").Value}";
-        }
-        IncomeInformationResponse? incomeInformationResponse = await financeServiceClient.Post<IncomeInformationRequest, IncomeInformationResponse>(incomeInformationRequest, incomeServiceUrl);
-        if (incomeInformationResponse == null)
-        {
-            throw new InternalServerErrorException("Something went wrong during income calculation.");
-        } 
-        
-        return incomeInformationResponse;
-    }
-
-    public async Task<bool> DeletePay(string userId, int payId)
-    {
-        HttpClient financeServiceClient = _httpClientFactory.CreateClient(_config.GetSection("Clients:FinanceServiceClient:ClientName").Value);
-        string financeServiceUrl = $"{_config.GetSection("Clients:FinanceServiceClient:DeletePayInformation").Value}/{userId}/{payId}";
-        bool response = await financeServiceClient.Delete(financeServiceUrl);
-        return response;
+        return incomeInformationRequest;
     }
 }

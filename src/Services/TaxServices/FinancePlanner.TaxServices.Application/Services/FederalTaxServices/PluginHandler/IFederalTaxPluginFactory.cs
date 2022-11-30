@@ -2,6 +2,6 @@
 
 public interface IFederalTaxPluginFactory
 {
-    T GetService<T>(string w4Type);
+    T? GetService<T>(string w4Type);
     void Initialize();
 }

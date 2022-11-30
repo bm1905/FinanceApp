@@ -79,14 +79,14 @@ public class FinanceController : ControllerBase
     }
 
     [MapToApiVersion("1.0")]
-    [HttpDelete("DeletePayInformation/{userId}/{payId:int}")]
+    [HttpDelete("DeletePayInformation/{userId}/{payId:int}/{incomeId:int}")]
     [ProducesResponseType(typeof(ActionResult<bool>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<bool>> DeletePayInformation(string userId, int payId)
+    public async Task<ActionResult<bool>> DeletePayInformation(string userId, int payId, int incomeId)
     {
-        bool response = await _financeService.DeletePay(userId, payId);
+        bool response = await _financeService.DeletePay(userId, payId, incomeId);
         return Ok(response);
     }
 

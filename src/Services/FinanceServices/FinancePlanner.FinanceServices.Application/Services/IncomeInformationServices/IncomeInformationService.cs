@@ -3,7 +3,6 @@ using FinancePlanner.FinanceServices.Application.Features.IncomeInformation.Comm
 using FinancePlanner.FinanceServices.Application.Features.IncomeInformation.Queries;
 using FinancePlanner.FinanceServices.Domain.Entities;
 using FinancePlanner.FinanceServices.Infrastructure.Repositories;
-using FinancePlanner.Shared.Models.Common;
 using FinancePlanner.Shared.Models.Exceptions;
 using FinancePlanner.Shared.Models.FinanceServices;
 

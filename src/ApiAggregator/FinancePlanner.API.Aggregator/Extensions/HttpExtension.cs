@@ -95,18 +95,15 @@ public static class HttpExtension
             throw new UnauthorizedException($"Request: {response.StatusCode}", $"The request for client {client.BaseAddress} and endpoint {url} is not authorized.");
         }
 
-        if (!response.IsSuccessStatusCode)
-        {
-            string errorResponse = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(errorResponse)) throw new InternalServerErrorException($"API call error out with status {response.StatusCode}");
-            ExceptionModel? exceptionModel = JsonSerializer.Deserialize<ExceptionModel>(errorResponse, options);
-            if (exceptionModel == null)
-            {
-                throw new InternalServerErrorException($"API call error out with {response.StatusCode}");
-            }
-            throw new ApiErrorException(exceptionModel.Message ?? "API call error", exceptionModel.Details ?? string.Empty);
-        }
+        if (response.IsSuccessStatusCode) return JsonSerializer.Deserialize<bool>(await response.Content.ReadAsStringAsync());
 
-        return response.IsSuccessStatusCode;
+        string errorResponse = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrEmpty(errorResponse)) throw new InternalServerErrorException($"API call error out with status {response.StatusCode}");
+        ExceptionModel? exceptionModel = JsonSerializer.Deserialize<ExceptionModel>(errorResponse, options);
+        if (exceptionModel == null)
+        {
+            throw new InternalServerErrorException($"API call error out with {response.StatusCode}");
+        }
+        throw new ApiErrorException(exceptionModel.Message ?? "API call error", exceptionModel.Details ?? string.Empty);
     }
 }
