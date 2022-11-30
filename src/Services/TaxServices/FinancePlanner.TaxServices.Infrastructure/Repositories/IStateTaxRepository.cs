@@ -1,7 +1,6 @@
-﻿namespace FinancePlanner.TaxServices.Infrastructure.Repositories
-{
-    public interface IStateTaxRepository
-    {
+﻿namespace FinancePlanner.TaxServices.Infrastructure.Repositories;
 
-    }
+public interface IStateTaxRepository
+{
+
 }

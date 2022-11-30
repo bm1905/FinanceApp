@@ -1,36 +1,38 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FinancePlanner.Shared.Models.Enums;
+using FinancePlanner.Shared.Models.Exceptions;
 using FinancePlanner.TaxServices.Application.Services.FederalTaxServices;
 using FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler;
 using MediatR;
 
-namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld
+namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
+
+public class GetFederalTaxWithheldQueryHandler : IRequestHandler<GetFederalTaxWithheldQuery, GetFederalTaxWithheldQueryResponse>
 {
-    public class GetFederalTaxWithheldQueryHandler : IRequestHandler<GetFederalTaxWithheldQuery, GetFederalTaxWithheldQueryResponse>
+    private readonly FederalTaxPluginFactory _pluginFactory;
+
+    public GetFederalTaxWithheldQueryHandler(FederalTaxPluginFactory pluginFactory)
     {
-        private readonly FederalTaxPluginFactory _pluginFactory;
+        _pluginFactory = pluginFactory;
+    }
 
-        public GetFederalTaxWithheldQueryHandler(FederalTaxPluginFactory pluginFactory)
+    public async Task<GetFederalTaxWithheldQueryResponse> Handle(GetFederalTaxWithheldQuery request, CancellationToken cancellationToken)
+    {
+        W4Type w4Type = request.RequestModel.TaxInformation.W4Type;
+        string? w4TypeName = Enum.GetName(typeof(W4Type), w4Type);
+        if (w4TypeName == null)
         {
-            _pluginFactory = pluginFactory;
+            throw new BadRequestException("Unable to get W4Type name");
+        }
+        IFederalTaxServices service = _pluginFactory.GetService<IFederalTaxServices>(w4TypeName);
+        if (service == null)
+        {
+            throw new ApplicationException("Something went wrong while loading plugin!");
         }
 
-        public async Task<GetFederalTaxWithheldQueryResponse> Handle(GetFederalTaxWithheldQuery request, CancellationToken cancellationToken)
-        {
-            if (request.RequestModel.W4Type == null)
-            {
-                throw new ArgumentException();
-            }
-
-            IFederalTaxServices service = _pluginFactory.GetService<IFederalTaxServices>(request.RequestModel.W4Type);
-            if (service == null)
-            {
-                throw new ApplicationException("Something went wrong while loading plugin!");
-            }
-
-            GetFederalTaxWithheldQueryResponse response = await service.CalculateFederalTaxWithheldAmount(request.RequestModel);
-            return response;
-        }
+        GetFederalTaxWithheldQueryResponse response = await service.CalculateFederalTaxWithheldAmount(request.RequestModel);
+        return response;
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld
+﻿namespace FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
+
+public class GetFederalTaxWithheldQueryResponse
 {
-    public class GetFederalTaxWithheldQueryResponse
-    {
-        public decimal FederalTaxableWage { get; set; }
-        public decimal FederalTaxWithheldAmount { get; set; }
-    }
+    public decimal FederalTaxableWage { get; set; }
+    public decimal FederalTaxWithheldAmount { get; set; }
 }

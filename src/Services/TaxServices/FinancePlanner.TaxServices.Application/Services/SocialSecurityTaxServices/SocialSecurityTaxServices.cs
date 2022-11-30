@@ -5,37 +5,36 @@ using FinancePlanner.TaxServices.Application.Features.SocialSecurityTax.Queries.
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 
-namespace FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.SocialSecurityTaxServices;
+
+public class SocialSecurityTaxServices : ISocialSecurityTaxServices
 {
-    public class SocialSecurityTaxServices : ISocialSecurityTaxServices
+    private readonly ISocialSecurityTaxRepository _socialSecurityTaxRepository;
+
+    public SocialSecurityTaxServices(ISocialSecurityTaxRepository socialSecurityTaxRepository)
     {
-        private readonly ISocialSecurityTaxRepository _socialSecurityTaxRepository;
+        _socialSecurityTaxRepository = socialSecurityTaxRepository;
+    }
 
-        public SocialSecurityTaxServices(ISocialSecurityTaxRepository socialSecurityTaxRepository)
+    public async Task<GetSocialSecurityTaxWithheldQueryResponse> CalculateSocialSecurityTaxWithheldAmount(CalculateTaxWithheldRequest request)
+    {
+        SocialSecurityTaxTable socialSecurityTaxPercentage = await _socialSecurityTaxRepository.GetSocialSecurityTaxPercentage(DateOnly.FromDateTime(DateTime.Now));
+        decimal taxAmount;
+        if (request.TaxableWageInformation.SocialAndMedicareTaxableWages <= socialSecurityTaxPercentage.WageBaseLimit)
         {
-            _socialSecurityTaxRepository = socialSecurityTaxRepository;
+            taxAmount = socialSecurityTaxPercentage.TaxRate / 100 * request.TaxableWageInformation.SocialAndMedicareTaxableWages;
+        }
+        else
+        {
+            taxAmount = socialSecurityTaxPercentage.TaxRate / 100 * socialSecurityTaxPercentage.WageBaseLimit;
         }
 
-        public async Task<GetSocialSecurityTaxWithheldQueryResponse> CalculateSocialSecurityTaxWithheldAmount(CalculateTaxWithheldRequest request)
+        GetSocialSecurityTaxWithheldQueryResponse response = new()
         {
-            SocialSecurityTaxTable socialSecurityTaxPercentage = await _socialSecurityTaxRepository.GetSocialSecurityTaxPercentage(DateOnly.FromDateTime(DateTime.Now));
-            decimal taxAmount;
-            if (request.SocialSecurityTaxableWage <= socialSecurityTaxPercentage.WageBaseLimit)
-            {
-                taxAmount = socialSecurityTaxPercentage.TaxRate / 100 * request.MedicareTaxableWage;
-            }
-            else
-            {
-                taxAmount = socialSecurityTaxPercentage.TaxRate / 100 * socialSecurityTaxPercentage.WageBaseLimit;
-            }
+            SocialSecurityTaxableWage = request.TaxableWageInformation.SocialAndMedicareTaxableWages,
+            SocialSecurityWithheldAmount = taxAmount
+        };
 
-            GetSocialSecurityTaxWithheldQueryResponse response = new()
-            {
-                SocialSecurityTaxableWage = request.MedicareTaxableWage,
-                SocialSecurityWithheldAmount = taxAmount
-            };
-
-            return response;
-        }
+        return response;
     }
 }

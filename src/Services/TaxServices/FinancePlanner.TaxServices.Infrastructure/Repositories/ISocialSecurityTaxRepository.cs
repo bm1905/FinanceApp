@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Domain.Entities;
 
-namespace FinancePlanner.TaxServices.Infrastructure.Repositories
+namespace FinancePlanner.TaxServices.Infrastructure.Repositories;
+
+public interface ISocialSecurityTaxRepository
 {
-    public interface ISocialSecurityTaxRepository
-    {
-        Task<SocialSecurityTaxTable> GetSocialSecurityTaxPercentage(DateOnly date);
-    }
+    Task<SocialSecurityTaxTable> GetSocialSecurityTaxPercentage(DateOnly date);
 }

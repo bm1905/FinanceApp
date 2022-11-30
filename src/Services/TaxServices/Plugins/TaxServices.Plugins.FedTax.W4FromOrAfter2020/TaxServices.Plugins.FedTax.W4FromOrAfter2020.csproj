@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;$(SolutionDir)Services\TaxServices\FinancePlanner.TaxServices.Services\bin\$(ConfigurationName)\net6.0\plugins\$(ProjectName)\&quot;" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.5">
+    <PackageReference Include="FinancePlanner.Shared.Models" Version="1.0.22">
       <ExcludeAssets>runtime</ExcludeAssets>
       <PrivateAssets>none</PrivateAssets>
       <Private>false</Private>

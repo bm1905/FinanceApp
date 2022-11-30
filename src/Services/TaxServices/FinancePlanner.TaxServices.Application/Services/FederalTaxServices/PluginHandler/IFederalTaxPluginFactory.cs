@@ -1,8 +1,7 @@
-﻿namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler
+﻿namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices.PluginHandler;
+
+public interface IFederalTaxPluginFactory
 {
-    public interface IFederalTaxPluginFactory
-    {
-        T GetService<T>(string w4Type);
-        void Initialize();
-    }
+    T GetService<T>(string w4Type);
+    void Initialize();
 }

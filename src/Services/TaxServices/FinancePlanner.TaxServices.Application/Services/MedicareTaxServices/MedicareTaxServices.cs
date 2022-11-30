@@ -5,33 +5,32 @@ using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Domain.Entities;
 using FinancePlanner.TaxServices.Infrastructure.Repositories;
 
-namespace FinancePlanner.TaxServices.Application.Services.MedicareTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.MedicareTaxServices;
+
+public class MedicareTaxServices : IMedicareTaxServices
 {
-    public class MedicareTaxServices : IMedicareTaxServices
+    private readonly IMedicareTaxRepository _medicareTaxRepository;
+
+    public MedicareTaxServices(IMedicareTaxRepository medicareTaxRepository)
     {
-        private readonly IMedicareTaxRepository _medicareTaxRepository;
+        _medicareTaxRepository = medicareTaxRepository;
+    }
 
-        public MedicareTaxServices(IMedicareTaxRepository medicareTaxRepository)
+    public async Task<GetMedicareTaxWithheldQueryResponse> CalculateMedicareTaxWithheldAmount(CalculateTaxWithheldRequest request)
+    {
+        MedicareTaxTable medicareTaxPercentage = await _medicareTaxRepository.GetMedicareTaxPercentage(DateOnly.FromDateTime(DateTime.Now));
+        decimal taxAmount = medicareTaxPercentage.TaxRate / 100 * request.TaxableWageInformation.SocialAndMedicareTaxableWages;
+        if (request.TaxableWageInformation.SocialAndMedicareTaxableWages > medicareTaxPercentage.ThresholdWage)
         {
-            _medicareTaxRepository = medicareTaxRepository;
+            taxAmount += (medicareTaxPercentage.AdditionalTaxRate / 100) * (request.TaxableWageInformation.SocialAndMedicareTaxableWages - medicareTaxPercentage.ThresholdWage);
         }
 
-        public async Task<GetMedicareTaxWithheldQueryResponse> CalculateMedicareTaxWithheldAmount(CalculateTaxWithheldRequest request)
+        GetMedicareTaxWithheldQueryResponse response = new()
         {
-            MedicareTaxTable medicareTaxPercentage = await _medicareTaxRepository.GetMedicareTaxPercentage(DateOnly.FromDateTime(DateTime.Now));
-            decimal taxAmount = medicareTaxPercentage.TaxRate / 100 * request.MedicareTaxableWage;
-            if (request.MedicareTaxableWage > medicareTaxPercentage.ThresholdWage)
-            {
-                taxAmount += (medicareTaxPercentage.AdditionalTaxRate / 100) * (request.MedicareTaxableWage - medicareTaxPercentage.ThresholdWage);
-            }
+            MedicareTaxableWage = request.TaxableWageInformation.SocialAndMedicareTaxableWages,
+            MedicareWithheldAmount = taxAmount
+        };
 
-            GetMedicareTaxWithheldQueryResponse response = new()
-            {
-                MedicareTaxableWage = request.MedicareTaxableWage,
-                MedicareWithheldAmount = taxAmount
-            };
-
-            return response;
-        }
+        return response;
     }
 }

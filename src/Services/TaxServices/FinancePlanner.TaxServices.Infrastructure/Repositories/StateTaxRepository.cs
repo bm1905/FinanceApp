@@ -1,6 +1,5 @@
-﻿namespace FinancePlanner.TaxServices.Infrastructure.Repositories
+﻿namespace FinancePlanner.TaxServices.Infrastructure.Repositories;
+
+public class StateTaxRepository : IStateTaxRepository
 {
-    public class StateTaxRepository : IStateTaxRepository
-    {
-    }
 }

@@ -2,10 +2,9 @@
 using FinancePlanner.Shared.Models.TaxServices;
 using FinancePlanner.TaxServices.Application.Features.FederalTax.Queries.GetFederalTaxWithheld;
 
-namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices
+namespace FinancePlanner.TaxServices.Application.Services.FederalTaxServices;
+
+public interface IFederalTaxServices
 {
-    public interface IFederalTaxServices
-    {
-        Task<GetFederalTaxWithheldQueryResponse> CalculateFederalTaxWithheldAmount(CalculateTaxWithheldRequest request);
-    }
+    Task<GetFederalTaxWithheldQueryResponse> CalculateFederalTaxWithheldAmount(CalculateTaxWithheldRequest request);
 }

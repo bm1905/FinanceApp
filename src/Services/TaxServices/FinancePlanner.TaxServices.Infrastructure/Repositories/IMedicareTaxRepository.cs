@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using FinancePlanner.TaxServices.Domain.Entities;
 
-namespace FinancePlanner.TaxServices.Infrastructure.Repositories
+namespace FinancePlanner.TaxServices.Infrastructure.Repositories;
+
+public interface IMedicareTaxRepository
 {
-    public interface IMedicareTaxRepository
-    {
-        Task<MedicareTaxTable> GetMedicareTaxPercentage(DateOnly date);
-    }
+    Task<MedicareTaxTable> GetMedicareTaxPercentage(DateOnly date);
 }
