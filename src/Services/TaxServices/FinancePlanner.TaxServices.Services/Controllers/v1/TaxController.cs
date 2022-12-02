@@ -14,9 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinancePlanner.TaxServices.Services.Controllers.v1;
 
 [ApiController]
-//[Authorize]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
+[Authorize("ApiScope")]
 public class TaxController : ControllerBase
 {
     private readonly IMediator _mediator;

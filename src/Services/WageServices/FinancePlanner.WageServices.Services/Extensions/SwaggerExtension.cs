@@ -35,9 +35,9 @@ public class SwaggerExtension : IConfigureNamedOptions<SwaggerGenOptions>
     {
         var info = new OpenApiInfo()
         {
-            Title = "PreTax Services API",
+            Title = "Wage Services API",
             Version = description.ApiVersion.ToString(),
-            Description = "FinancePlanner.PreTaxServices with API Versioning.",
+            Description = "FinancePlanner Wage Services  with API Versioning.",
             Contact = new OpenApiContact() { Name = "Bijay Maharjan", Email = "bijay.maharjan5@gmail.com" },
             License = new OpenApiLicense() { Name = "GNU", Url = new Uri("https://www.gnu.org/licenses") }
         };

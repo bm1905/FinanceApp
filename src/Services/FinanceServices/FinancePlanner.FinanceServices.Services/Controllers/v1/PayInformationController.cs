@@ -12,9 +12,9 @@ using FinancePlanner.Shared.Models.FinanceServices;
 namespace FinancePlanner.FinanceServices.Services.Controllers.v1;
 
 [ApiController]
-//[Authorize]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
+[Authorize("ApiScope")]
 public class PayInformationController : ControllerBase
 {
     private readonly IMediator _mediator;

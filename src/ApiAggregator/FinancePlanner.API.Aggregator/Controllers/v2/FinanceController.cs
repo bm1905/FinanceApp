@@ -8,7 +8,7 @@ namespace FinancePlanner.API.Aggregator.Controllers.v2;
 [ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ValidateModelFilter]
-public class PayController : ControllerBase
+public class FinanceController : ControllerBase
 {
     [MapToApiVersion("2.0")]
     [HttpGet("Test")]
