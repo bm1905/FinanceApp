@@ -11,7 +11,6 @@ using HealthChecks.UI.Client;
 using Serilog;
 using Logger;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.IdentityModel.Logging;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IConfiguration configuration = builder.Configuration;
