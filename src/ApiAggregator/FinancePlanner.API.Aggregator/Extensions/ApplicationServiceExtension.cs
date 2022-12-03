@@ -23,9 +23,7 @@ public static class ApplicationServiceExtension
     {
         services.AddSwaggerVersions();
         services.AddServices();
-        services.AddSecurity(config);
         services.AddServiceDiscovery(config);
-        services.AddHealthChecks(config);
         services.AddHttpClient(config);
         return services;
     }
@@ -45,34 +43,28 @@ public static class ApplicationServiceExtension
             .HandleTransientHttpError() // HttpRequestException, 5XX and 408
             .WaitAndRetryAsync(int.Parse(config.GetSection("Clients:RetryCount").Value), 
                 retryAttempt => TimeSpan.FromSeconds(retryAttempt));
-           
+
+        services.AddHeaderPropagation(options =>
+        {
+            options.Headers.Add("Authorization");
+        });
+
         services.AddHttpClient(config.GetSection("Clients:WageServiceClient:ClientName").Value, client =>
         {
             client.BaseAddress = new Uri(config.GetSection("Clients:WageServiceClient:BaseURL").Value);
-        }).AddPolicyHandler(retryPolicy);
+        }).AddPolicyHandler(retryPolicy).AddHeaderPropagation();
 
         services.AddHttpClient(config.GetSection("Clients:TaxServiceClient:ClientName").Value, client =>
         {
             client.BaseAddress = new Uri(config.GetSection("Clients:TaxServiceClient:BaseURL").Value);
-        }).AddPolicyHandler(retryPolicy);
+        }).AddPolicyHandler(retryPolicy).AddHeaderPropagation();
 
         services.AddHttpClient(config.GetSection("Clients:FinanceServiceClient:ClientName").Value, client =>
         {
             client.BaseAddress = new Uri(config.GetSection("Clients:FinanceServiceClient:BaseURL").Value);
-        }).AddPolicyHandler(retryPolicy);
+        }).AddPolicyHandler(retryPolicy).AddHeaderPropagation();
     }
 
-    // Health Check
-    private static void AddHealthChecks(this IServiceCollection services, IConfiguration config)
-    {
-    }
-
-    // Security
-    private static void AddSecurity(this IServiceCollection services, IConfiguration config)
-    {
-
-    }
-        
     // Service Discovery
     private static void AddServiceDiscovery(this IServiceCollection services, IConfiguration config)
     {

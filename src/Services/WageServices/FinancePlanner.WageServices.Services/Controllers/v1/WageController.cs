@@ -2,6 +2,7 @@
 using FinancePlanner.Shared.Models.WageServices;
 using FinancePlanner.WageServices.Services.Filters;
 using FinancePlanner.WageServices.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace FinancePlanner.WageServices.Services.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
+[Authorize("ApiScope")]
 [ValidateModelFilter]
 public class WageController : ControllerBase
 {
@@ -22,6 +24,7 @@ public class WageController : ControllerBase
         _postTaxService = postTaxService;
     }
 
+    [AllowAnonymous]
     [MapToApiVersion("1.0")]
     [HttpGet("Test")]
     [ProducesResponseType(typeof(ActionResult), (int)HttpStatusCode.OK)]

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ServiceDiscovery;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -23,29 +25,31 @@ public static class ApplicationServiceExtension
     // Health Check
     private static void AddHealthChecks(this IServiceCollection services, IConfiguration config)
     {
+        services.AddHealthChecks()
+            .AddSqlServer(config.GetSection("ConnectionStrings:SqlConnection").Value ?? string.Empty,
+                name: "TAX_SERVICES Database Health",
+                failureStatus: HealthStatus.Degraded);
     }
 
     // Security
     private static void AddSecurity(this IServiceCollection services, IConfiguration config)
     {
-        //services.AddAuthentication(config.GetSection("Authentication:Scheme").Value)
-        //    .AddJwtBearer(config.GetSection("Authentication:Scheme").Value, options =>
-        //    {
-        //        options.Authority = config.GetSection("Authentication:IdentityServer:Url").Value;
-        //        options.TokenValidationParameters = new TokenValidationParameters
-        //        {
-        //            ValidateAudience = false
-        //        };
-        //    });
+        services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.Authority = config["IdentityServer:BaseUrl"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false
+                };
+            });
 
-        //services.AddAuthorization(options =>
-        //{
-        //    options.AddPolicy(config.GetSection("Authentication:Policy:Name").Value,
-        //        policy => policy.RequireClaim(config.GetSection("Authentication:Policy:ClaimType").Value,
-        //            config.GetSection("Authentication:Policy:AllowedValues").Value));
-        //});
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ApiScope", policy => policy.RequireClaim("scope", "TaxServices"));
+        });
     }
-        
+
     // Service Discovery
     private static void AddServiceDiscovery(this IServiceCollection services, IConfiguration config)
     {

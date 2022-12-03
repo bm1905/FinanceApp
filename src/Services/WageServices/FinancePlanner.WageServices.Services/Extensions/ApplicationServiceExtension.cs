@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 using ServiceDiscovery;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,7 +20,6 @@ public static class ApplicationServiceExtension
         services.AddServices();
         services.AddSecurity(config);
         services.AddServiceDiscovery(config);
-        services.AddHealthChecks(config);
         return services;
     }
 
@@ -31,15 +31,23 @@ public static class ApplicationServiceExtension
         services.AddScoped<IPostTaxService, PostTaxService>();
     }
 
-    // Health Check
-    private static void AddHealthChecks(this IServiceCollection services, IConfiguration config)
-    {
-    }
-
     // Security
     private static void AddSecurity(this IServiceCollection services, IConfiguration config)
     {
+        services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.Authority = config["IdentityServer:BaseUrl"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false
+                };
+            });
 
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ApiScope", policy => policy.RequireClaim("scope", "WageServices"));
+        });
     }
         
     // Service Discovery
